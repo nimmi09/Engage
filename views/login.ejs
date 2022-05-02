@@ -1,0 +1,32 @@
+<h1>Login</h1>
+
+<ul>
+  <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
+  <li><%= error.message %></li>
+  <% }) %> <% } %>
+</ul>
+
+<ul>
+  <% if(messages.success_msg) { %>
+  <li><%= messages.success_msg %></li>
+  <% } %>
+</ul>
+
+<ul>
+  <% if (messages.error) { %>
+  <li><%= messages.error %></li>
+  <% } %>
+</ul>
+<form action="/users/login" method="POST">
+  <div>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
+  </div>
+ 
+  <div>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <button type="submit">Login</button>
+</form>
+<a href="/users/register">Register</a>
