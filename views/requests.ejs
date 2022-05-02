@@ -1,0 +1,11 @@
+<ul>
+    <% for (var i = 0; i < requests.length ; i++) { %>
+       <li>  
+        <%= requests[i].user_name %> 
+        <%= requests[i].user_designation %> 
+        <a href= "/accept/<%= requests[i].user_id %>">Accept</a>
+        <a href="/reject/<%= requests[i].user_id %>">Reject</a>  </li>
+    <% } %>
+   
+
+</ul>
