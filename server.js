@@ -63,26 +63,51 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
         console.log(err);
       }
       id=results.rows[0].user_id
-      console.log('id',id)
+      name=results.rows[0].user_name
+      email=results.rows[0].email
+      desg=results.rows[0].user_designation
+      hashedPassword=results.rows[0].password
+      
       //console.log(results.rows);
       client.query(
         `INSERT INTO users (user_id,user_name, email,user_designation, password)
-            VALUES ($1, $2, $3, $4)`,
+            VALUES ($1, $2, $3, $4,$5)`,
         [id,name, email,desg, hashedPassword],
         (err, results1) => {
           if (err) {
             throw err;
           }
-          //console.log(results.rows);
+          console.log(results1.rows);
+        }
+      );
+      client.query(
+        `DELETE from temp WHERE user_id=$1`,
+        [id],
+        (err, results1) => {
+          if (err) {
+            throw err;
+          }
+          console.log(results1.rows);
         }
       );
     
     });
+    //res.redirect("/users/requests");
     }
   );
   
 app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
-  
+  client.query(
+    `DELETE from temp WHERE user_id=$1`,
+    [id],
+    (err, results1) => {
+      if (err) {
+        throw err;
+      }
+      console.log(results1.rows);
+    }
+  );
+  //res.redirect("/users/requests");
 });
 
 app.get("/users/requests", checkNotAuthenticated, (req, res) => {

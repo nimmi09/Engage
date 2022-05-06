@@ -8,7 +8,7 @@ function initialize(passport) {
   
 
   const authenticateUser = (email, password, done) => {
-    console.log(email, password);
+    
     
     client.query(
       `SELECT * FROM users WHERE email = $1`,
@@ -17,7 +17,7 @@ function initialize(passport) {
         if (err) {
           throw err;
         }
-        console.log(results.rows);
+        
 
         if (results.rows.length > 0) {
           const user = results.rows[0];
