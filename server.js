@@ -96,7 +96,7 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
       );
     
     });
-    //res.redirect("/users/requests");
+    res.redirect("/users/super");
     }
   );
   
@@ -115,7 +115,7 @@ app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
 });
 
 app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
-  
+  if(req.params.type=='user' && req.user.type=='admin' || req.user.type=='super'){
   client.query(
   `SELECT * FROM temp where type=$1`,
   [req.params.type],
@@ -134,7 +134,10 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
   }
 );
  
-  
+}
+else {
+  res.render("error.ejs");
+} 
 });
 
 app.get("/users/login", checkAuthenticated, (req, res) => {
