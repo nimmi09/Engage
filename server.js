@@ -51,6 +51,9 @@ app.get("/", (req, res) => {
 app.get("/users/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs");
 });
+app.get("/users/super", checkAuthenticated, (req, res) => {
+  res.render("super.ejs");
+});
 app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
   
   client.query(
@@ -62,6 +65,7 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
         
         console.log(err);
       }
+      type=results.rows[0].type
       id=results.rows[0].user_id
       name=results.rows[0].user_name
       email=results.rows[0].email
@@ -70,9 +74,9 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
       
       //console.log(results.rows);
       client.query(
-        `INSERT INTO users (user_id,user_name, email,user_designation, password)
-            VALUES ($1, $2, $3, $4,$5)`,
-        [id,name, email,desg, hashedPassword],
+        `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
+            VALUES ($1, $2, $3, $4,$5,$6)`,
+        [type,id,name, email,desg, hashedPassword],
         (err, results1) => {
           if (err) {
             throw err;
@@ -111,9 +115,11 @@ app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
 });
 
 app.get("/users/requests", checkNotAuthenticated, (req, res) => {
-  
+  console.log('22');
+  console.log(req.user.url);
   client.query(
-  `SELECT * FROM temp`,
+  `SELECT * FROM temp where type=$1`,
+  ['user'],
   
   (err, results) => {
     if (err) {
@@ -138,9 +144,22 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
   res.render("login.ejs");
 });
 
+
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   
-  res.render("dashboard.ejs", { user: req.user.name });
+  res.render("dashboard.ejs");
+});
+app.get("/users/admin", checkNotAuthenticated, (req, res) => {
+  
+  res.render("admin.ejs");
+});
+app.get("/users/super", checkNotAuthenticated, (req, res) => {
+  
+  res.render("super.ejs");
+});
+app.get("/users/superd", checkNotAuthenticated, (req, res) => {
+  
+  res.render("superd.ejs");
 });
 
 app.get("/users/logout", (req, res) => {
@@ -149,7 +168,7 @@ app.get("/users/logout", (req, res) => {
 });
 
 app.post("/users/register", async (req, res) => {
-  let { name, email,desg, password, password2 } = req.body;
+  let {type, name, email,desg, password, password2 } = req.body;
   
   let errors = [];
 
@@ -158,9 +177,7 @@ app.post("/users/register", async (req, res) => {
 
   
 
-  if (password.length < 6) {
-    errors.push({ message: "Password must be a least 6 characters long" });
-  }
+  
 
   if (password !== password2) {
     errors.push({ message: "Passwords do not match" });
@@ -168,7 +185,7 @@ app.post("/users/register", async (req, res) => {
 
   if (errors.length > 0) {
     //console.log('123')
-    res.render("register.ejs", { errors, name, email,desg, password, password2 });
+    res.render("register.ejs", { errors,type, name, email,desg, password, password2 });
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
     //console.log(hashedPassword)
@@ -194,9 +211,9 @@ app.post("/users/register", async (req, res) => {
         } else {
           //console.log('inserting')
           client.query(
-            `INSERT INTO temp (user_name, email,user_designation, password)
-                VALUES ($1, $2, $3, $4)`,
-            [name, email,desg, hashedPassword],
+            `INSERT INTO temp (type,user_name, email,user_designation, password)
+                VALUES ($1, $2, $3, $4,$5)`,
+            [type,name, email,desg, hashedPassword],
             (err, results) => {
               if (err) {
                 throw err;
@@ -208,16 +225,29 @@ app.post("/users/register", async (req, res) => {
           );
         }
       }
-    );
-  }
+    ); 
+
+}
 });
 
 app.post( "/users/login",
   passport.authenticate("local", {
-    successRedirect: "/users/dashboard",
+    
+   
     failureRedirect: "/users/login",
     failureFlash: true
-  })
+  }) , (req,res) => {
+    
+    if (req.user.type=='super') {
+      res.redirect('/users/superd');
+    }
+    if (req.user.type=='user'){
+      res.redirect('/users/dashboard');
+    }
+    if (req.user.type=='admin'){
+      res.redirect('/users/admin');
+    }
+  }
 );
 
 function checkAuthenticated(req, res, next) {
@@ -233,6 +263,43 @@ function checkNotAuthenticated(req, res, next) {
   }
   res.redirect("/users/login");
 }
+
+
+app.post("/users/super", async (req, res) => {
+  let {type, id,name, email,desg, password, password2 } = req.body;
+  
+  let errors = [];
+  if (password !== password2) {
+    errors.push({ message: "Passwords do not match" });
+  }
+
+  if (errors.length > 0) {
+    //console.log('123')
+    res.render("super.ejs", { errors,type,id, name, email,desg, password, password2 });
+  } else {
+    hashedPassword = await bcrypt.hash(password, 10);
+    //console.log(hashedPassword)
+    // Validation passed
+    client.query(
+            `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
+                VALUES ($1, $2, $3, $4,$5,$6)`,
+            [type,id,name, email,desg, hashedPassword],
+            (err, results) => {
+              if (err) {
+                throw err;
+              }
+             
+              req.flash("success_msg", "You are now registered. Please log in");
+              res.redirect("/users/login");
+            }
+          );
+        
+      
+    
+
+}
+});
+
 
 
 app.listen(PORT, () => {

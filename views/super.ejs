@@ -1,14 +1,19 @@
+
 <h1>Register</h1>
 <ul>
   <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
   <li><%= error.message %></li>
   <% }) %> <% } %>
 </ul>
-<form action="/users/register" method="POST">
+<form action="/users/super" method="POST">
   <div>
-    <input type="radio" name="type" value="admin"> Admin
-<input type="radio" name="type" value="user"> User
+    <input type="radio" name="type" value="super"> Super
 
+
+  </div>
+  <div>
+    <label for="id">id</label>
+    <input type="text" id="id" name="id" required>
   </div>
   <div>
     <label for="name">Name</label>
