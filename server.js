@@ -103,23 +103,22 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
 app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
   client.query(
     `DELETE from temp WHERE user_id=$1`,
-    [id],
-    (err, results1) => {
+    [req.params.uid],
+    (err, results) => {
       if (err) {
         throw err;
       }
-      console.log(results1.rows);
+     
     }
   );
   //res.redirect("/users/requests");
 });
 
-app.get("/users/requests", checkNotAuthenticated, (req, res) => {
-  console.log('22');
-  console.log(req.user.url);
+app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
+  
   client.query(
   `SELECT * FROM temp where type=$1`,
-  ['user'],
+  [req.params.type],
   
   (err, results) => {
     if (err) {
@@ -134,7 +133,7 @@ app.get("/users/requests", checkNotAuthenticated, (req, res) => {
     
   }
 );
-
+ 
   
 });
 
