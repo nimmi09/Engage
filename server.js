@@ -13,6 +13,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const initializePassport = require("./passport-config");
+const req = require("express/lib/request");
 
 initializePassport(passport);
 client.connect(err => {
@@ -81,7 +82,7 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
           if (err) {
             throw err;
           }
-          console.log(results1.rows);
+          
         }
       );
       client.query(
@@ -91,16 +92,34 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
           if (err) {
             throw err;
           }
-          console.log(results1.rows);
+         
         }
+
       );
-    
+      if (type=='user'){
+        res.redirect("/users/requests/user");
+      }
+      else if (type=='admin'){
+        res.redirect("/users/requests/admin");
+      }
     });
-    res.redirect("/users/super");
-    }
-  );
+    
+  }
+ 
+  
+  ); 
   
 app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
+  client.query(
+    `SELECT * FROM temp
+      WHERE user_id = $1`,
+    [req.params.uid],
+    (err, results) => {
+      if (err) {
+        
+        console.log(err);
+      }
+      type=results.rows[0].type
   client.query(
     `DELETE from temp WHERE user_id=$1`,
     [req.params.uid],
@@ -111,7 +130,15 @@ app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
      
     }
   );
-  //res.redirect("/users/requests");
+  if (type=='user'){
+    res.redirect("/users/requests/user");
+  }
+  else if (type=='admin'){
+    res.redirect("/users/requests/admin");
+  }
+}
+  );
+ 
 });
 
 app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
@@ -172,15 +199,7 @@ app.get("/users/logout", (req, res) => {
 app.post("/users/register", async (req, res) => {
   let {type, name, email,desg, password, password2 } = req.body;
   
-  let errors = [];
-
- 
-
-
-  
-
-  
-
+  let errors = []
   if (password !== password2) {
     errors.push({ message: "Passwords do not match" });
   }
