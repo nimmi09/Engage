@@ -1,16 +1,32 @@
 const express = require("express");
+ 
 //const { client } = require("./dbConfig");
 const { client }= require("./database");
-
+const multer = require('multer');
+//const upload = multer({dest: __dirname + '/uploads'});
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
-
+const {PythonShell} =require('python-shell');
 const app = express();
-
+const fs = require('fs');
+const path = require('path');
 const PORT = process.env.PORT || 3000;
+let storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, __dirname+'/uploads/temp')
+  },
+  filename: function (req, file, cb) {
+    let extArray = file.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+    cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
+  }
+})
+
+const upload = multer({ storage: storage })
+
 
 const initializePassport = require("./passport-config");
 const req = require("express/lib/request");
@@ -28,6 +44,7 @@ client.connect(err => {
 // Parses details from a form
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
+app.use(express.static('views'));
 
 app.use(
   session({
@@ -52,8 +69,11 @@ app.get("/", (req, res) => {
 app.get("/users/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs");
 });
-app.get("/users/super", checkAuthenticated, (req, res) => {
+app.get("/users/super", checkNotAuthenticated, (req, res) => {
   res.render("super.ejs");
+});
+app.get("/search", checkNotAuthenticated, (req, res) => {
+  res.render("search.ejs");
 });
 app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
   
@@ -178,17 +198,22 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   
   res.render("dashboard.ejs");
 });
+app.get("/crime", checkNotAuthenticated, (req, res) => {
+  
+  res.render("crime.ejs");
+});
 app.get("/users/admin", checkNotAuthenticated, (req, res) => {
   
   res.render("admin.ejs");
 });
-app.get("/users/super", checkNotAuthenticated, (req, res) => {
-  
-  res.render("super.ejs");
-});
+
 app.get("/users/superd", checkNotAuthenticated, (req, res) => {
   
   res.render("superd.ejs");
+});
+app.get("/add_offender", checkNotAuthenticated, (req, res) => {
+  
+  res.render("add_offender.ejs");
 });
 
 app.get("/users/logout", (req, res) => {
@@ -321,9 +346,88 @@ app.post("/users/super", async (req, res) => {
 }
 });
 
+app.post('/search', upload.single('photo'), (req, res) => {
+
+ client.query(
+  `SELECT * from images `,
+ 
+  (err, results) => {
+    if (err) {
+      throw err;
+    }
+    
+   rows=JSON.stringify(results.rows);
+  
+let options = {
+mode: 'text',
+pythonOptions: ['-u'], // get print results in real-time
+  //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
+args: [req.file.path,rows] //An argument which can be accessed in the script using sys.argv[1]
+};
+PythonShell.run('face.py', options, function (err, result){
+if (err) throw err;
+// result is an array consisting of messages collected
+//during execution of script.
+console.log('result: ', result.toString());
+res.send(result.toString())
+
+});
+});
+  
+}
+);
+
+
+app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
+ 
+  date=new Date().toDateString();
+  
+  console.log(req.file)
+  let { name, age, gender } = req.body;
+client.query(
+  `INSERT INTO tempoffender (user_id,offender_age,offender_gender,date_added,offender_name)
+      VALUES ($1, $2, $3, $4,$5) RETURNING offender_id`,
+  [req.user.user_id,age,gender,date,name],
+  (err, results) => {
+    if (err) {
+      throw err;
+    }
+    offender_id=results.rows[0].offender_id;
+    client.query(
+      `INSERT INTO tempimages (path,offender_id)
+          VALUES ($1, $2) `,
+      [req.file.path,offender_id],
+      (err, results) => {
+        if (err) {
+          throw err;
+        }
+       
+        
+      }
+    );
+  
+}
+);
+
+
+ 
+  
+
+
+    
+  }
+);
+
+ 
+  
+   
+
+ 
 
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
 
