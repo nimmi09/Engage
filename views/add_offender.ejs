@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+    <meta charset="utf-8">
+   
+    
+</head>
+<body>
+
+ 
+<form action="/add_offender" method="post" enctype="multipart/form-data" >
+           <div>
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+          
+            <div>
+              <label for="age">Age</label>
+              <input type="text" id="age" name="age" required>
+            </div>
+           
+            <div>
+                <input type="radio" name="gender" value="male"> Male
+            <input type="radio" name="gender" value="female"> Female
+            <input type="radio" name="gender" value="other"> Other
+            
+
+
+              </div>
+              <div>
+                <input type="file" accept="image/*" name="photo" >
+              </div>
+              <button id="button" type="submit">Add Offender Info</button>
+     
+
+
+ 
+  
+  
+
+
+
+            
+           
+          
+</form>
+            
+
+</body>
+
+
+</html>
