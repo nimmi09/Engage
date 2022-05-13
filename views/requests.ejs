@@ -3,8 +3,8 @@
        <li>  
         <%= requests[i].user_name %> 
         <%= requests[i].user_designation %> 
-        <a href= "/accept/<%= requests[i].user_id %>">Accept</a>
-        <a href="/reject/<%= requests[i].user_id %>">Reject</a>  </li>
+        <a href= "/accept/<%= requests[i].type %> /<%= requests[i].user_id %>">Accept</a>
+        <a href="/reject/<%= requests[i].type %>/<%= requests[i].user_id %>">Reject</a>  </li>
     <% } %>
    
 
