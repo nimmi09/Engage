@@ -26,10 +26,23 @@ let storage = multer.diskStorage({
 })
 
 const upload = multer({ storage: storage })
+let storage1 = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, __dirname+'/uploads/search')
+  },
+  filename: function (req, file, cb) {
+    let extArray = file.mimetype.split("/");
+    let extension = extArray[extArray.length - 1];
+    cb(null, file.fieldname + '-' + Date.now()+ '.' +extension)
+  }
+})
+
+const searchupload = multer({ storage: storage1 })
 
 
 const initializePassport = require("./passport-config");
 const req = require("express/lib/request");
+const { range } = require("express/lib/request");
 
 initializePassport(passport);
 client.connect(err => {
@@ -75,8 +88,8 @@ app.get("/users/super", checkNotAuthenticated, (req, res) => {
 app.get("/search", checkNotAuthenticated, (req, res) => {
   res.render("search.ejs");
 });
-app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
-  
+app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
+  if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
   client.query(
     `SELECT * FROM temp
       WHERE user_id = $1`,
@@ -123,13 +136,111 @@ app.get("/accept/:uid", checkNotAuthenticated, (req, res) => {
         res.redirect("/users/requests/admin");
       }
     });
+  }
+  else if (req.params.type=='offender'){
+    client.query(
+      `SELECT * FROM tempoffender
+        WHERE offender_id = $1`,
+      [req.params.uid],
+      (err, results) => {
+        if (err) {
+          
+          console.log(err);
+        }
+        user_id=results.rows[0].user_id
+        offender_age=results.rows[0].offender_age
+        offender_name=results.rows[0].offender_name
+        offender_gender=results.rows[0].offender_gender
+        offender_id=results.rows[0].offender_id
+        date_added=results.rows[0].date_added
+        image_id=results.rows[0].image_id
+        
+        //console.log(results.rows);
+        client.query(
+          `INSERT INTO offender (user_id,offender_age,offender_name,offender_gender,offender_id,date_added,image_id)
+              VALUES ($1, $2, $3, $4,$5,$6,$7)`,
+          [user_id,offender_age,offender_name,offender_gender,offender_id,date_added,image_id],
+          (err, results1) => {
+            if (err) {
+              throw err;
+            }
+            
+          }
+        );
+        client.query(
+          `DELETE from tempoffender WHERE offender_id=$1`,
+          [offender_id],
+          (err, results1) => {
+            if (err) {
+              throw err;
+            }
+           
+          }
+  
+        );
+        
+      });
+      client.query(
+        `SELECT * FROM tempimages
+          WHERE offender_id = $1`,
+        [req.params.uid],
+        (err, results) => {
+          if (err) {
+            
+            console.log(err);
+          }
+          for (let i=0;i<results.rows.length;i++){
+            image_path=results.rows[i].path
+            image_id=results.rows[i].image_id
+            client.query(
+              `INSERT INTO images (path,image_id,offender_id)
+                  VALUES ($1, $2, $3)`,
+              [image_path,image_id,req.params.uid],
+              (err, results1) => {
+                if (err) {
+                  throw err;
+                }
+                
+              }
+            );
+            let pathparts = image_path.split("\\");
+            let filename=pathparts[pathparts.length-1]
+            const destinationPath = 'C:/Users/namra/OneDrive/Desktop/Engage/uploads/permanent'+'/'+filename
+           
+
+fs.rename(image_path, destinationPath, function (err) {
+    if (err) {
+        throw err
+    } 
+}); 
+           
+          }
+          
+          
+          //console.log(results.rows);
+          
+          client.query(
+            `DELETE from tempimages WHERE offender_id=$1`,
+            [offender_id],
+            (err, results1) => {
+              if (err) {
+                throw err;
+              }
+             
+            }
     
+          );
+          
+        });
+        res.redirect("/users/requests/offender");
+  } 
   }
  
   
   ); 
   
-app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
+app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
+  if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
   client.query(
     `SELECT * FROM temp
       WHERE user_id = $1`,
@@ -158,6 +269,58 @@ app.get("/reject/:uid", checkNotAuthenticated, (req, res) => {
   }
 }
   );
+}
+  if(req.params.type=='offender'){
+    
+    client.query(
+      `SELECT * FROM tempimages
+        WHERE offender_id = $1`,
+      [req.params.uid],
+      (err, results) => {
+        if (err) {
+          
+          console.log(err);
+        }
+        for (let i=0;i<results.rows.length;i++){
+          image_path=results.rows[i].path
+          image_id=results.rows[i].image_id
+          
+          
+          fs.unlinkSync(image_path, (err => {
+            if (err) console.log(err);
+            
+          }));
+         
+        }
+      }
+    );
+
+    
+      client.query(
+        `DELETE from tempoffender WHERE offender_id=$1`,
+        [req.params.uid],
+        (err, results) => {
+          if (err) {
+            throw err;
+          }
+         
+        }
+      );
+      client.query(
+        `DELETE from tempimages WHERE offender_id=$1`,
+        [req.params.uid],
+        (err, results) => {
+          if (err) {
+            throw err;
+          }
+         
+        }
+      );
+      
+    }
+      
+    
+  
  
 });
 
@@ -186,6 +349,31 @@ else {
   res.render("error.ejs");
 } 
 });
+app.get("/offender_requests", checkNotAuthenticated, (req, res) => {
+  if(req.user.type=='user' || req.user.type=='admin' || req.user.type=='super'){
+  client.query(
+  `SELECT * FROM tempoffender`,
+ 
+  
+  (err, results) => {
+    if (err) {
+      
+      console.log(err);
+    }
+    
+    requests=Array.from(results.rows);
+    
+    
+    res.render("offender_requests.ejs",{requests});
+    
+  }
+);
+ 
+}
+else {
+  res.render("error.ejs");
+} 
+});
 
 app.get("/users/login", checkAuthenticated, (req, res) => {
   // flash sets a messages variable. passport sets the error message
@@ -198,10 +386,7 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   
   res.render("dashboard.ejs");
 });
-app.get("/crime", checkNotAuthenticated, (req, res) => {
-  
-  res.render("crime.ejs");
-});
+
 app.get("/users/admin", checkNotAuthenticated, (req, res) => {
   
   res.render("admin.ejs");
@@ -346,7 +531,7 @@ app.post("/users/super", async (req, res) => {
 }
 });
 
-app.post('/search', upload.single('photo'), (req, res) => {
+app.post('/search', searchupload.single('photo'), (req, res) => {
 
  client.query(
   `SELECT * from images `,
@@ -395,16 +580,27 @@ client.query(
     offender_id=results.rows[0].offender_id;
     client.query(
       `INSERT INTO tempimages (path,offender_id)
-          VALUES ($1, $2) `,
+          VALUES ($1, $2) RETURNING image_id `,
       [req.file.path,offender_id],
       (err, results) => {
         if (err) {
           throw err;
         }
-       
+       image_id=results.rows[0].image_id
+       client.query(
+        `UPDATE tempoffender  SET image_id=$1 where offender_id = $2`,
+        [image_id,offender_id],
+        (err, results) => {
+          if (err) {
+            throw err;
+          }
+         
+        }
+      );
         
       }
     );
+    
   
 }
 );
