@@ -13,6 +13,7 @@ const {PythonShell} =require('python-shell');
 const app = express();
 const fs = require('fs');
 const path = require('path');
+
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,6 +44,17 @@ const searchupload = multer({ storage: storage1 })
 const initializePassport = require("./passport-config");
 const req = require("express/lib/request");
 const { range } = require("express/lib/request");
+const { sql_helper } = require("./sql-helper");
+const { image } = require("./image");
+const {user} =require('./user');
+const {offender} =require('./offender');
+const {victim} =require('./victim');
+
+const {location} =require('./location');
+const {offence} =require('./offence');
+const {categories} =require('./category');
+const { string_utility } =require('./string-utility');
+const { type } = require("express/lib/response");
 
 initializePassport(passport);
 client.connect(err => {
@@ -52,9 +64,7 @@ client.connect(err => {
     console.log('connected')
   }
 })
-// Middleware
 
-// Parses details from a form
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(express.static('views'));
@@ -89,286 +99,93 @@ app.get("/search", checkNotAuthenticated, (req, res) => {
   res.render("search.ejs");
 });
 app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
-  if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
-  client.query(
-    `SELECT * FROM temp
-      WHERE user_id = $1`,
-    [req.params.uid],
-    (err, results) => {
-      if (err) {
-        
-        console.log(err);
-      }
-      type=results.rows[0].type
-      id=results.rows[0].user_id
-      name=results.rows[0].user_name
-      email=results.rows[0].email
-      desg=results.rows[0].user_designation
-      hashedPassword=results.rows[0].password
-      
-      //console.log(results.rows);
-      client.query(
-        `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
-            VALUES ($1, $2, $3, $4,$5,$6)`,
-        [type,id,name, email,desg, hashedPassword],
-        (err, results1) => {
-          if (err) {
-            throw err;
-          }
-          
-        }
-      );
-      client.query(
-        `DELETE from temp WHERE user_id=$1`,
-        [id],
-        (err, results1) => {
-          if (err) {
-            throw err;
-          }
-         
-        }
+if (req.params.type=='user'||req.params.type=='admin'|| req.params.type=='super'){
+  sql_helper.accept_user(uid);
+ }
+ else if(req.params.type=='offender'){
+sql_helper.accept_offender (uid)
 
-      );
-      if (type=='user'){
+ }
+  
+      if (req.params.type=='user'){
         res.redirect("/users/requests/user");
       }
-      else if (type=='admin'){
+      else if (req.params.type=='admin'){
         res.redirect("/users/requests/admin");
       }
-    });
-  }
-  else if (req.params.type=='offender'){
-    client.query(
-      `SELECT * FROM tempoffender
-        WHERE offender_id = $1`,
-      [req.params.uid],
-      (err, results) => {
-        if (err) {
-          
-          console.log(err);
-        }
-        user_id=results.rows[0].user_id
-        offender_age=results.rows[0].offender_age
-        offender_name=results.rows[0].offender_name
-        offender_gender=results.rows[0].offender_gender
-        offender_id=results.rows[0].offender_id
-        date_added=results.rows[0].date_added
-        image_id=results.rows[0].image_id
-        
-        //console.log(results.rows);
-        client.query(
-          `INSERT INTO offender (user_id,offender_age,offender_name,offender_gender,offender_id,date_added,image_id)
-              VALUES ($1, $2, $3, $4,$5,$6,$7)`,
-          [user_id,offender_age,offender_name,offender_gender,offender_id,date_added,image_id],
-          (err, results1) => {
-            if (err) {
-              throw err;
-            }
-            
-          }
-        );
-        client.query(
-          `DELETE from tempoffender WHERE offender_id=$1`,
-          [offender_id],
-          (err, results1) => {
-            if (err) {
-              throw err;
-            }
-           
-          }
-  
-        );
-        
-      });
-      client.query(
-        `SELECT * FROM tempimages
-          WHERE offender_id = $1`,
-        [req.params.uid],
-        (err, results) => {
-          if (err) {
-            
-            console.log(err);
-          }
-          for (let i=0;i<results.rows.length;i++){
-            image_path=results.rows[i].path
-            image_id=results.rows[i].image_id
-            client.query(
-              `INSERT INTO images (path,image_id,offender_id)
-                  VALUES ($1, $2, $3)`,
-              [image_path,image_id,req.params.uid],
-              (err, results1) => {
-                if (err) {
-                  throw err;
-                }
-                
-              }
-            );
-            let pathparts = image_path.split("\\");
-            let filename=pathparts[pathparts.length-1]
-            const destinationPath = 'C:/Users/namra/OneDrive/Desktop/Engage/uploads/permanent'+'/'+filename
-           
-
-fs.rename(image_path, destinationPath, function (err) {
-    if (err) {
-        throw err
-    } 
-}); 
-           
-          }
-          
-          
-          //console.log(results.rows);
-          
-          client.query(
-            `DELETE from tempimages WHERE offender_id=$1`,
-            [offender_id],
-            (err, results1) => {
-              if (err) {
-                throw err;
-              }
-             
-            }
-    
-          );
-          
-        });
+      else if(req.params.type=='offender'){
         res.redirect("/users/requests/offender");
-  } 
-  }
- 
-  
-  ); 
+      }
+    }); 
   
 app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
-  if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
-  client.query(
-    `SELECT * FROM temp
-      WHERE user_id = $1`,
-    [req.params.uid],
-    (err, results) => {
-      if (err) {
-        
-        console.log(err);
-      }
-      type=results.rows[0].type
-  client.query(
-    `DELETE from temp WHERE user_id=$1`,
-    [req.params.uid],
-    (err, results) => {
-      if (err) {
-        throw err;
-      }
+ 
+    if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
+sql_helper.reject_user(uid)
      
+   
     }
-  );
-  if (type=='user'){
-    res.redirect("/users/requests/user");
-  }
-  else if (type=='admin'){
-    res.redirect("/users/requests/admin");
-  }
-}
-  );
-}
-  if(req.params.type=='offender'){
-    
-    client.query(
-      `SELECT * FROM tempimages
-        WHERE offender_id = $1`,
-      [req.params.uid],
-      (err, results) => {
-        if (err) {
-          
-          console.log(err);
-        }
-        for (let i=0;i<results.rows.length;i++){
-          image_path=results.rows[i].path
-          image_id=results.rows[i].image_id
-          
-          
-          fs.unlinkSync(image_path, (err => {
-            if (err) console.log(err);
-            
-          }));
+    if(req.params.type=='offender'){
+      sql_helper.reject_offender(uid)
+           
          
-        }
-      }
-    );
-
-    
-      client.query(
-        `DELETE from tempoffender WHERE offender_id=$1`,
-        [req.params.uid],
-        (err, results) => {
-          if (err) {
-            throw err;
           }
-         
-        }
-      );
-      client.query(
-        `DELETE from tempimages WHERE offender_id=$1`,
-        [req.params.uid],
-        (err, results) => {
-          if (err) {
-            throw err;
-          }
-         
-        }
-      );
+    if (type=='user'){
+      res.redirect("/users/requests/user");
+    }
+    else if (type=='admin'){
+      res.redirect("/users/requests/admin");
+    }
+    else if(req.params.type=='offender'){
+        res.redirect("/offender_requests");
+       
       
     }
-      
-    
-  
- 
-});
-
-app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
-  if(req.params.type=='user' && req.user.type=='admin' || req.user.type=='super'){
-  client.query(
-  `SELECT * FROM temp where type=$1`,
-  [req.params.type],
-  
-  (err, results) => {
-    if (err) {
-      
-      console.log(err);
-    }
-    
-    requests=Array.from(results.rows);
-    console.log(requests);
-    
-    res.render("requests.ejs",{requests});
-    
   }
-);
+        
+);   
+    
  
-}
-else {
-  res.render("error.ejs");
-} 
+    
+    app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
+      if(req.params.type=='user' && req.user.type=='admin' || req.user.type=='super'){
+        //var results=sql_helper.user_requests(req.params.type);
+      sql_helper.user_requests(req.params.type,function(err,results){
+       
+        if (err==undefined){
+          requests=Array.from(results.rows);
+          console.log(requests);
+          //console.log('res',res);
+
+          res.render("requests.ejs",{requests});
+        }
+       
+      });
+    
+        }
+    else {
+      res.render("error.ejs");
+    } 
+
+ 
 });
 app.get("/offender_requests", checkNotAuthenticated, (req, res) => {
-  if(req.user.type=='user' || req.user.type=='admin' || req.user.type=='super'){
-  client.query(
-  `SELECT * FROM tempoffender`,
- 
   
-  (err, results) => {
-    if (err) {
-      
-      console.log(err);
-    }
-    
-    requests=Array.from(results.rows);
-    
-    
-    res.render("offender_requests.ejs",{requests});
-    
-  }
-);
+  if(req.user.type=='user' || req.user.type=='admin' || req.user.type=='super'){
+    //var requests=sql_helper.offender_requests();
+    sql_helper.offender_requests(function(err,results){
+       
+      if (err==undefined){
+        requests=Array.from(results.rows);
+        
+
+        res.render("offender_requests.ejs",{requests});
+      }
+     
+    });
+
  
+
 }
 else {
   res.render("error.ejs");
@@ -376,8 +193,7 @@ else {
 });
 
 app.get("/users/login", checkAuthenticated, (req, res) => {
-  // flash sets a messages variable. passport sets the error message
-  console.log(req.session.flash.error);
+  
   res.render("login.ejs");
 });
 
@@ -397,8 +213,31 @@ app.get("/users/superd", checkNotAuthenticated, (req, res) => {
   res.render("superd.ejs");
 });
 app.get("/add_offender", checkNotAuthenticated, (req, res) => {
+  sql_helper.get_offence_categories(function(err,results){
+       
+    if (err==undefined){
+      
+      var category=Array.from(results.rows);
+      
+      sql_helper.get_locations(function(err,results){
+       
+        if (err==undefined){
+          
+          locations=Array.from(results.rows);
+          
+         
+          res.render("add_offender.ejs",{locations,category});
+        }
+       
+      });
+    
+    }
+   
+  });
   
-  res.render("add_offender.ejs");
+
+  
+ 
 });
 
 app.get("/users/logout", (req, res) => {
@@ -407,6 +246,7 @@ app.get("/users/logout", (req, res) => {
 });
 
 app.post("/users/register", async (req, res) => {
+ 
   let {type, name, email,desg, password, password2 } = req.body;
   
   let errors = []
@@ -415,48 +255,39 @@ app.post("/users/register", async (req, res) => {
   }
 
   if (errors.length > 0) {
-    //console.log('123')
+  
     res.render("register.ejs", { errors,type, name, email,desg, password, password2 });
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
-    //console.log(hashedPassword)
-    // Validation passed
-  
-    client.query(
-      `SELECT * FROM users
-        WHERE email = $1`,
-      [email],
-      (err, results) => {
-        if (err) {
-          //console.log('error')
-          console.log(err);
-        }
+    
+    var requests= sql_helper.fetch_users(email);
+    if (requests.length > 0) {
+     
+      return res.render("register", {
+        message: "Email already registered"
+      });
+    }
         
         
 
-        if (results.rows.length > 0) {
+        //if (results.rows.length > 0) {
           //console.log('show')
-          return res.render("register", {
-            message: "Email already registered"
-          });
-        } else {
-          //console.log('inserting')
-          client.query(
-            `INSERT INTO temp (type,user_name, email,user_designation, password)
-                VALUES ($1, $2, $3, $4,$5)`,
-            [type,name, email,desg, hashedPassword],
-            (err, results) => {
-              if (err) {
-                throw err;
-              }
-             
-              req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect("/users/login");
-            }
-          );
+          //return res.render("register", {
+            //message: "Email already registered"
+          //});}
+         else {
+          let User=new user(type,name, email,desg, hashedPassword);
+
+          //console.log(User)
+          var status=sql_helper.add_user(User);
+          if (status=='success'){
+            req.flash("success_msg", "You are now registered. Please log in");
+            res.redirect("/users/login");
+          }
+          
         }
-      }
-    ); 
+      
+  
 
 }
 });
@@ -532,96 +363,166 @@ app.post("/users/super", async (req, res) => {
 });
 
 app.post('/search', searchupload.single('photo'), (req, res) => {
-
- client.query(
-  `SELECT * from images `,
- 
-  (err, results) => {
-    if (err) {
-      throw err;
-    }
+ var images=sql_helper.get_images();
+ rows=JSON.stringify(images);
+       
+      
+    let options = {
+    mode: 'text',
+    pythonOptions: ['-u'], // get print results in real-time
+      //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
+    args: [req.file.path,rows] //An argument which can be accessed in the script using sys.argv[1]
+    };
+    PythonShell.run('face.py', options, function (err, result){
+    if (err) throw err;
+    // result is an array consisting of messages collected
+    //during execution of script.
+    console.log('result: ', result.toString());
+    res.send(result.toString())
     
-   rows=JSON.stringify(results.rows);
-  
-let options = {
-mode: 'text',
-pythonOptions: ['-u'], // get print results in real-time
-  //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
-args: [req.file.path,rows] //An argument which can be accessed in the script using sys.argv[1]
-};
-PythonShell.run('face.py', options, function (err, result){
-if (err) throw err;
-// result is an array consisting of messages collected
-//during execution of script.
-console.log('result: ', result.toString());
-res.send(result.toString())
-
-});
-});
+    });
+   
+ 
+ 
   
 }
 );
 
 
 app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
- 
-  date=new Date().toDateString();
+  console.log(req.body);
+    date=new Date().toDateString();
   
-  console.log(req.file)
-  let { name, age, gender } = req.body;
-client.query(
-  `INSERT INTO tempoffender (user_id,offender_age,offender_gender,date_added,offender_name)
-      VALUES ($1, $2, $3, $4,$5) RETURNING offender_id`,
-  [req.user.user_id,age,gender,date,name],
-  (err, results) => {
-    if (err) {
-      throw err;
-    }
-    offender_id=results.rows[0].offender_id;
-    client.query(
-      `INSERT INTO tempimages (path,offender_id)
-          VALUES ($1, $2) RETURNING image_id `,
-      [req.file.path,offender_id],
-      (err, results) => {
-        if (err) {
-          throw err;
+    
+    let { name, age, gender,date_committed,category,othercategory,region,otherregion, victim_age,victim_gender} = req.body;
+    
+    let Offender=new offender(req.user.user_id,age,gender,date,name);
+    let Location=new location(region);
+    let Offence=new offence();
+    Offence.date_committed=date_committed;
+    Offence.user_id=req.user.user_id;
+    let Image=new image();
+    Image.path=req.file.path;
+    let Victim = new victim();
+    Victim.age=victim_age;
+    Victim.gender=victim_gender;
+   
+    if (category=='OtherCategory'){
+     
+      category=(string_utility.titleCase(othercategory));
+      let Category=new categories(category);
+      sql_helper.new_category(Category,function(err,results){
+    
+     
+        if (err==undefined){
+          Offence.category_id=results;
+          console.log('6',Offence);
         }
-       image_id=results.rows[0].image_id
-       client.query(
-        `UPDATE tempoffender  SET image_id=$1 where offender_id = $2`,
-        [image_id,offender_id],
-        (err, results) => {
-          if (err) {
-            throw err;
-          }
+  
+      
+      });
+     
+      
+    }
+    else if (category!='OtherCategory'){
+     
+      let Category=new categories(category);
+      sql_helper.get_category_id(Category,function(err,results){
+    
+     
+        if (err==undefined){
+          Offence.category_id=results;
+          console.log('5',Offence);
          
         }
-      );
+  
+      
+      });
+     
+      
+    }
+   
+    if (region=='OtherRegion'){
+      region=(string_utility.titleCase(otherregion));
+      let Location=new location(region);
+      sql_helper.new_location(Location,function(err,results){
+    
+     
+        if (err==undefined){
+          Offence.loc_id=results;
+          console.log('1',Offence);
+         
+        }
+  
+      
+      });
+     
+      
+    }
+    else if (region!='OtherRegion'){
+     
+      let Location=new location(region);
+      sql_helper.get_loc_id(Location,function(err,results){
+    
+     
+        if (err==undefined){
+          Offence.loc_id=results;
+          console.log('2',Offence);
+         
+        }
+  
+      
+      });
+     
+      
+    }
+   
+   
+  
+
+  
+    
+   
+    sql_helper.add_offender(Offender,function(err,results){
+    
+     
+      if (err==undefined){
+        Offence.offender_id=results;
+        console.log('3',Offence);
+        Image.offender_id=results;
+        sql_helper.add_offender_image(Image);
+        sql_helper.add_victim(Victim,function(err,results){
+          console.log('123',Victim);
+           console.log(err);
+          if (err==undefined){
+            Offence.victim_id=results;
+            console.log('4',Offence);
+            sql_helper.add_offence_details(Offence);
+          }
+      
         
+        });
+       
       }
-    );
+
     
+    });
+
+   
+    
+   
+   
+
   
-}
-);
-
-
  
-  
-
-
-    
-  }
-);
-
+   //let Offence=new offence(req.user.user_id,offender_id,loc_id,date_committed,category,is_category_new,victim_id);
  
   
    
+  }
+);
 
- 
-
-
-app.listen(PORT, () => {
+ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
