@@ -7,8 +7,7 @@
     
 </head>
 <body>
-
- 
+<%- include('partials/header') %> 
 <form action="/add_offender" method="post" enctype="multipart/form-data" >
            <div>
               <label for="name">Name</label>
@@ -31,33 +30,80 @@
               <div>
                 <input type="file" accept="image/*" name="photo" >
               </div>
-              <button id="button" type="submit">Add Offender Info</button>
-     
+            
               <div>
-                <label for="victimage">Victim Age</label>
-                <input type="text" id="victimage" name="victimage" required>
+                <input type="date" id="date_committed" name="date_committed">
+              </div>
+              
+              <script type="text/javascript">
+                function showcategory(name){
+                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='Other: <input type="text" name="othercategory" />';
+                  else   document.getElementById('div1').innerHTML='';
+                }
+                function showlocation(name){
+                  if(name=='OtherRegion')document.getElementById('div2').innerHTML='Other: <input type="text" name="otherregion" />';
+                  else document.getElementById('div2').innerHTML='';
+                }
+                </script>
+                
+                <select name="category" id="category" onchange="showcategory(this.options[this.selectedIndex].value)">
+                <option selected="selected">Offence Category</option>
+              
+                  <% for (var i = 0; i < category.length ; i++) { %>
+                   
+                      <option value= <%= category[i].category_name%> > <%= category[i].category_name %> </option>
+                     
+                     
+                  <% } %>
+                 
+              
+             
+               
+               
+                <option value="OtherCategory">Other Category</option>
+                </select>
+                <div id="div1"></div>
+                <select name="region" id="region" onchange="showlocation(this.options[this.selectedIndex].value)">
+                  <option selected="selected">Region</option>
+                
+                    <% for (var i = 0; i < locations.length ; i++) { %>
+                     
+                        <option value= <%= locations[i].region%> > <%= locations[i].region %> </option>
+                       
+                       
+                    <% } %>
+                   
+                
+               
+                 
+                 
+                  <option value="OtherRegion">Other Region</option>
+                  </select>
+                  <div id="div2"></div>
+  
+
+
+
+
+              <div>
+                <label for="victim_age">Victim Age</label>
+                <input type="text" id="victim_age" name="victim_age" required>
               </div>
              
               <div>Victim Gender
-                  <input type="radio" name="victimgender" value="male"> Male
-              <input type="radio" name="victimgender" value="female"> Female
-              <input type="radio" name="victimgender" value="other"> Other
+                  <input type="radio" name="victim_gender" value="male"> Male
+              <input type="radio" name="victim_gender" value="female"> Female
+              <input type="radio" name="victim_gender" value="other"> Other
               
   
   
                 </div>
-                <div>
-                  <input type="radio" name="region" value="east"> East
-              <input type="radio" name="region" value="west"> West
-              <input type="radio" name="region" value="north"> North
-              <input type="radio" name="region" value="south"> South
-              
-                </div>
+               
 
  
   
   
-
+                <button id="button" type="submit">Add Offender Info</button>
 
 
             

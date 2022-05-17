@@ -1,4 +1,14 @@
-
-<a href="/users/requests/admin">admin Requests</a>
-<a href="/users/requests/user">user Requests</a>
-<a href="/users/logout">logout</a>
+<%- include('partials/header') %> 
+         
+         
+            <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Requests
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/users/requests/admin">Admin</a></li>
+              <li><a class="dropdown-item" href="/users/requests/user">User</a></li>
+              <li><a class="dropdown-item" href="/offender_requests">Offender</a></li>
+             
+            </ul>
+          
+       
