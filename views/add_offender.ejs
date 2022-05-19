@@ -40,10 +40,7 @@
                   if(name=='OtherCategory')document.getElementById('div1').innerHTML='Other: <input type="text" name="othercategory" />';
                   else   document.getElementById('div1').innerHTML='';
                 }
-                function showlocation(name){
-                  if(name=='OtherRegion')document.getElementById('div2').innerHTML='Other: <input type="text" name="otherregion" />';
-                  else document.getElementById('div2').innerHTML='';
-                }
+              
                 </script>
                 
                 <select name="category" id="category" onchange="showcategory(this.options[this.selectedIndex].value)">
@@ -63,7 +60,7 @@
                 <option value="OtherCategory">Other Category</option>
                 </select>
                 <div id="div1"></div>
-                <select name="region" id="region" onchange="showlocation(this.options[this.selectedIndex].value)">
+                <select name="region" id="region">
                   <option selected="selected">Region</option>
                 
                     <% for (var i = 0; i < locations.length ; i++) { %>
@@ -75,14 +72,12 @@
                    
                 
                
+                </select>
                  
                  
-                  <option value="OtherRegion">Other Region</option>
-                  </select>
-                  <div id="div2"></div>
   
 
-
+                  
 
 
               <div>
