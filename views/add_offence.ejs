@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>     
 <html lang="en">
 <head>
    
@@ -8,7 +8,7 @@
 </head>
 <body>
 <%- include('partials/header') %> 
-<form action="/add_offender" method="post" enctype="multipart/form-data" >
+<form action="/add_offence" method="post" enctype="multipart/form-data" >
            <div>
               <label for="name">Name</label>
               <input type="text" id="name" name="name" required>
@@ -37,8 +37,33 @@
               
               <script type="text/javascript">
                 function showcategory(name){
-                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='Other: <input type="text" name="othercategory" />';
+                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='Other: <input type="text" id="othercategoryinput" name="othercategory" onblur="check_repeats(<%= JSON.stringify(category) %>)"/>';
                   else   document.getElementById('div1').innerHTML='';
+                }
+                function titleCase(str) {
+    str = str.toLowerCase().split(' ');
+    for (var i = 0; i < str.length; i++) {
+      str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+    }
+    return str.join(' ');
+  }
+                function check_repeats(category){
+                  
+                  var val =titleCase(document.getElementById('othercategoryinput').value);
+                
+                 document.getElementById('othercategoryinput').value=val;
+                 for (var i = 0; i < category.length ; i++) {
+                  console.log(category[i].category_name,val);
+                   if(category[i].category_name==val){
+                    document.getElementById('othercategoryinput').value='';
+                    alert("Entered category already exists.");
+                  
+
+                   }
+                   
+                 
+                  
+                } 
                 }
               
                 </script>
@@ -57,7 +82,7 @@
              
                
                
-                <option value="OtherCategory">Other Category</option>
+                <option value="OtherCategory" >Other Category</option>
                 </select>
                 <div id="div1"></div>
                 <select name="region" id="region">

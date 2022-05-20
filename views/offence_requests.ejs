@@ -1,0 +1,22 @@
+<%- include('partials/header') %> 
+
+<ul>
+    <% for (var i = 0; i < offences.length ; i++) { %>
+       <li>  
+       
+        <%= offences[i].offender_name %> 
+        <br>
+        <%=offences[i].offender_age %> 
+        <br>
+        <%= offences[i].offender_gender %> 
+        <br>
+        <%= offences[i].date_committed%> 
+        <br>
+        <%= offences[i].region%> 
+        <br>
+        <a href= "/accept/offence/<%= offences[i].offence_id %>">Accept</a>
+        <a href="/reject/offence/<%= offences[i].offence_id%>">Reject</a>  </li>
+    <% } %>
+   
+
+</ul>
