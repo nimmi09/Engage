@@ -5,17 +5,21 @@ import numpy as np
 import face_recognition
 import os
 
+import time
+start=time.time()
 rows=json.loads(sys.argv[2])
 if (len(rows) ==0):
     print("no images to search from")
 else:
+    print(time.time()-start,'else start')
+
     images=[]
-    offender_id=[]
-    print(rows[0]['path'])
+    image_id=[]
+    
     for row in rows:
         curImg = cv2.imread(row['path'])
         images.append(curImg)
-        offender_id.append(row['offender_id'])
+        image_id.append(row['image_id'])
     
     imgTest = face_recognition.load_image_file(sys.argv[1])
     imgTest = cv2.cvtColor(imgTest,cv2.COLOR_BGR2RGB)
@@ -32,11 +36,14 @@ else:
 
     matches = face_recognition.compare_faces(encodeListKnown,encodeTest)
     faceDis = face_recognition.face_distance(encodeListKnown,encodeTest)
-    print(matches,faceDis)
+    
 
     matchIndex = np.argmin(faceDis)
     if matches[matchIndex]:
-        print(offender_id[matchIndex])
+        print(image_id[matchIndex],'True')
+    else:
+        print('False')
+print(time.time()-start)
 
 
 
