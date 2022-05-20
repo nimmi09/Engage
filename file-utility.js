@@ -11,7 +11,10 @@ fs.rename(image_path, destinationPath, function (err) {
 if (err) {
 throw err
 } 
+
 }); 
+console.log(destinationPath);
+return destinationPath;
 }
 static deletefile(images){
 for (let i=0;i<images;i++){
