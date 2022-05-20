@@ -1,15 +1,12 @@
 const LocalStrategy = require("passport-local").Strategy;
 //const { pool } = require("./dbConfig");
-const { client }= require("./database");
+const { client } = require("./database");
 const bcrypt = require("bcrypt");
 
 function initialize(passport) {
-    console.log("Initialized");
-  
+  console.log("Initialized");
 
   const authenticateUser = (email, password, done) => {
-    
-    
     client.query(
       `SELECT * FROM users WHERE email = $1`,
       [email],
@@ -17,7 +14,6 @@ function initialize(passport) {
         if (err) {
           throw err;
         }
-        
 
         if (results.rows.length > 0) {
           const user = results.rows[0];
@@ -36,7 +32,7 @@ function initialize(passport) {
         } else {
           // No user
           return done(null, false, {
-            message: "No user with that email address"
+            message: "No user with that email address",
           });
         }
       }
@@ -59,13 +55,17 @@ function initialize(passport) {
   // The fetched object is attached to the request object as req.user
 
   passport.deserializeUser((id, done) => {
-    client.query(`SELECT * FROM users WHERE user_id = $1`, [id], (err, results) => {
-      if (err) {
-        return done(err);
+    client.query(
+      `SELECT * FROM users WHERE user_id = $1`,
+      [id],
+      (err, results) => {
+        if (err) {
+          return done(err);
+        }
+        console.log(`ID is ${results.rows[0].id}`);
+        return done(null, results.rows[0]);
       }
-      console.log(`ID is ${results.rows[0].id}`);
-      return done(null, results.rows[0]);
-    });
+    );
   });
 }
 
