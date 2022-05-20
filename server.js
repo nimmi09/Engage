@@ -166,15 +166,18 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
       if (err == undefined) {
         //console.log(offences);
         if (offences.length == 0) {
-          res.render("error.ejs");
+          var error = 'No Requests to show';
+    console.log(error);
+    res.render("error.ejs", {error});
         } else {
           res.render("offence_requests.ejs", { offences });
         }
       }
     });
   } else {
-    var error = "No Requests to show";
-    res.render("error.ejs", { error });
+    var error = 'Not Authorized';
+    console.log(error);
+    res.render("error.ejs", {error});
   }
 });
 
@@ -208,7 +211,18 @@ app.get("/add_offence", checkNotAuthenticated, (req, res) => {
     }
   });
 });
-
+app.get("/home", (req, res) => {
+  if (req.user.type == "super") {
+    res.redirect("/users/superd");
+  }
+  else if (req.user.type == "user") {
+    res.redirect("/users/dashboard");
+  }
+  else if (req.user.type == "admin") {
+    res.redirect("/users/admin");
+  }
+ 
+});
 app.get("/users/logout", (req, res) => {
   req.logout();
   res.render("index.ejs", { message: "You have logged out successfully" });
@@ -275,10 +289,10 @@ app.post(
     if (req.user.type == "super") {
       res.redirect("/users/superd");
     }
-    if (req.user.type == "user") {
+    else if (req.user.type == "user") {
       res.redirect("/users/dashboard");
     }
-    if (req.user.type == "admin") {
+    else if (req.user.type == "admin") {
       res.redirect("/users/admin");
     }
   }
@@ -369,7 +383,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
 });
 
 app.post("/add_offence", upload.single("photo"), (req, res, next) => {
-  console.log(req.body);
+  
   date = new Date().toDateString();
 
   let {
@@ -434,11 +448,22 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
             Offence.victim_id = results;
             console.log("4", Offence);
             sql_helper.add_offence_details(Offence);
+            req.flash("success_msg", "Offence Details Added");
+            if (req.user.type == "super") {
+              res.redirect("/users/superd");
+            }
+            else if (req.user.type == "user") {
+              res.redirect("/users/dashboard");
+            }
+            else if (req.user.type == "admin") {
+              res.redirect("/users/admin");
+            }
           }
         });
       });
     }
   });
+  
 });
 
 app.listen(PORT, () => {
