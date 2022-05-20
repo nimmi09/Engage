@@ -100,47 +100,53 @@ app.get("/search", checkNotAuthenticated, (req, res) => {
 });
 app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
 if (req.params.type=='user'||req.params.type=='admin'|| req.params.type=='super'){
-  sql_helper.accept_user(uid);
+  console.log('nimmi');
+  sql_helper.accept_user(req.params.uid);
+  console.log('hhiii');
+    if (req.params.type=='user'){
+    res.redirect("/users/requests/user");
+  }
+  else if (req.params.type=='admin'){
+    res.redirect("/users/requests/admin");
+  }
  }
- else if(req.params.type=='offender'){
-sql_helper.accept_offender (uid)
+ else if(req.params.type=='offence'){
+sql_helper.accept_offence(req.params.uid);
+
+  res.redirect("/offence_requests");
+
 
  }
   
-      if (req.params.type=='user'){
-        res.redirect("/users/requests/user");
-      }
-      else if (req.params.type=='admin'){
-        res.redirect("/users/requests/admin");
-      }
-      else if(req.params.type=='offender'){
-        res.redirect("/users/requests/offender");
-      }
+     
+     
     }); 
   
 app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
  
     if(req.params.type=='user'|| req.params.type=='admin'|| req.params.type=='super'){
-sql_helper.reject_user(uid)
+sql_helper.reject_user(req.params.uid);
+if (type=='user'){
+  res.redirect("/users/requests/user");
+}
+else if (type=='admin'){
+  res.redirect("/users/requests/admin");
+}
      
    
     }
-    if(req.params.type=='offender'){
-      sql_helper.reject_offender(uid)
+    if(req.params.type=='offence'){
+      sql_helper.reject_offence(req.params.uid);
+     
+        res.redirect("/offence_requests");
+       
+      
+    
            
          
           }
-    if (type=='user'){
-      res.redirect("/users/requests/user");
-    }
-    else if (type=='admin'){
-      res.redirect("/users/requests/admin");
-    }
-    else if(req.params.type=='offender'){
-        res.redirect("/offender_requests");
-       
-      
-    }
+   
+    
   }
         
 );   
@@ -148,38 +154,44 @@ sql_helper.reject_user(uid)
  
     
     app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
-      if(req.params.type=='user' && req.user.type=='admin' || req.user.type=='super'){
-        //var results=sql_helper.user_requests(req.params.type);
-      sql_helper.user_requests(req.params.type,function(err,results){
-       
-        if (err==undefined){
-          requests=Array.from(results.rows);
-          console.log(requests);
-          //console.log('res',res);
+     
+     
+    if(req.params.type=='user' && req.user.type=='admin' || req.user.type=='super'){
 
-          res.render("requests.ejs",{requests});
+    sql_helper.user_requests(req.params.type,function(err,results){
+       
+         if (err==undefined){
+        requests=Array.from(results.rows);
+         
+         
+
+       res.render("requests.ejs",{requests});
         }
        
-      });
+     });
     
         }
     else {
-      res.render("error.ejs");
-    } 
+     res.render("error.ejs");
+     } 
 
  
 });
-app.get("/offender_requests", checkNotAuthenticated, (req, res) => {
+app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
   
   if(req.user.type=='user' || req.user.type=='admin' || req.user.type=='super'){
     //var requests=sql_helper.offender_requests();
-    sql_helper.offender_requests(function(err,results){
-       
+    sql_helper.offence_requests(function(err,offences){
+      
       if (err==undefined){
-        requests=Array.from(results.rows);
-        
-
-        res.render("offender_requests.ejs",{requests});
+        //console.log(offences);
+        if (offences.length==0){
+          
+          res.render("error.ejs");
+        }
+else{
+        res.render("offence_requests.ejs",{offences});
+}
       }
      
     });
@@ -203,6 +215,7 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   res.render("dashboard.ejs");
 });
 
+
 app.get("/users/admin", checkNotAuthenticated, (req, res) => {
   
   res.render("admin.ejs");
@@ -212,7 +225,7 @@ app.get("/users/superd", checkNotAuthenticated, (req, res) => {
   
   res.render("superd.ejs");
 });
-app.get("/add_offender", checkNotAuthenticated, (req, res) => {
+app.get("/add_offence", checkNotAuthenticated, (req, res) => {
   sql_helper.get_offence_categories(function(err,results){
        
     if (err==undefined){
@@ -223,7 +236,7 @@ app.get("/add_offender", checkNotAuthenticated, (req, res) => {
        
         if (err==undefined){
           
-          locations=Array.from(results.rows);
+          var locations=Array.from(results.rows);
           
          
           res.render("add_offender.ejs",{locations,category});
@@ -245,6 +258,7 @@ app.get("/users/logout", (req, res) => {
   res.render("index.ejs", { message: "You have logged out successfully" });
 });
 
+
 app.post("/users/register", async (req, res) => {
  
   let {type, name, email,desg, password, password2 } = req.body;
@@ -260,32 +274,52 @@ app.post("/users/register", async (req, res) => {
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
     
-    var requests= sql_helper.fetch_users(email);
-    if (requests.length > 0) {
+   
+    sql_helper.get_users(email,function(err,results){
+    
      
-      return res.render("register", {
-        message: "Email already registered"
-      });
-    }
+      if (err==undefined){
+       
+        var requests=Array.from(results.rows);
+        if (requests.length > 0) {
+     
+          return res.render("register", {
+            message: "Email already registered"
+          });
+        }
         
-        
-
-        //if (results.rows.length > 0) {
-          //console.log('show')
-          //return res.render("register", {
-            //message: "Email already registered"
-          //});}
-         else {
+        else {
           let User=new user(type,name, email,desg, hashedPassword);
 
           //console.log(User)
-          var status=sql_helper.add_user(User);
-          if (status=='success'){
-            req.flash("success_msg", "You are now registered. Please log in");
-            res.redirect("/users/login");
-          }
+          
+          sql_helper.add_user(User,function(err,results){
+    
+     
+            if (err==undefined){
+              var status=results;
+              if (status=='success'){
+                req.flash("success_msg", "You are now registered. Please log in");
+                res.redirect("/users/login");
+              }
+             
+            }
+      
+          
+          });
+          
           
         }
+        
+      }
+
+    
+    });
+  
+        
+        
+
+     
       
   
 
@@ -363,38 +397,53 @@ app.post("/users/super", async (req, res) => {
 });
 
 app.post('/search', searchupload.single('photo'), (req, res) => {
- var images=sql_helper.get_images();
- rows=JSON.stringify(images);
-       
-      
-    let options = {
+  var start=Date.now();
+ sql_helper.get_images(function(err,results){
+  console.log('callback',Date.now()-start); 
+     
+  if (err==undefined){
+   var images=results;
+   var rows=JSON.stringify(images);
+         
+   let options = {
     mode: 'text',
     pythonOptions: ['-u'], // get print results in real-time
       //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
     args: [req.file.path,rows] //An argument which can be accessed in the script using sys.argv[1]
     };
+    console.log('before py',Date.now()-start);
     PythonShell.run('face.py', options, function (err, result){
+      console.log('after py',Date.now()-start);
     if (err) throw err;
     // result is an array consisting of messages collected
     //during execution of script.
     console.log('result: ', result.toString());
+
     res.send(result.toString())
+    console.log('completed',Date.now()-start);
     
     });
-   
+  }
+  
+
+
+});
  
+       
+
+
  
   
 }
 );
 
 
-app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
+app.post("/add_offence", upload.single('photo'), (req, res, next)=>{
   console.log(req.body);
     date=new Date().toDateString();
   
     
-    let { name, age, gender,date_committed,category,othercategory,region,otherregion, victim_age,victim_gender} = req.body;
+    let { name, age, gender,date_committed,category,othercategory,region, victim_age,victim_gender} = req.body;
     
     let Offender=new offender(req.user.user_id,age,gender,date,name);
     let Location=new location(region);
@@ -416,7 +465,7 @@ app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
      
         if (err==undefined){
           Offence.category_id=results;
-          console.log('6',Offence);
+         
         }
   
       
@@ -432,8 +481,7 @@ app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
      
         if (err==undefined){
           Offence.category_id=results;
-          console.log('5',Offence);
-         
+          
         }
   
       
@@ -441,56 +489,34 @@ app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
      
       
     }
-   
-    if (region=='OtherRegion'){
-      region=(string_utility.titleCase(otherregion));
-      let Location=new location(region);
-      sql_helper.new_location(Location,function(err,results){
-    
-     
-        if (err==undefined){
-          Offence.loc_id=results;
-          console.log('1',Offence);
-         
-        }
-  
-      
-      });
-     
-      
-    }
-    else if (region!='OtherRegion'){
-     
-      let Location=new location(region);
-      sql_helper.get_loc_id(Location,function(err,results){
-    
-     
-        if (err==undefined){
-          Offence.loc_id=results;
-          console.log('2',Offence);
-         
-        }
-  
-      
-      });
-     
-      
-    }
-   
-   
-  
-
-  
-    
-   
-    sql_helper.add_offender(Offender,function(err,results){
+    sql_helper.get_loc_id(Location,function(err,results){
     
      
       if (err==undefined){
-        Offence.offender_id=results;
-        console.log('3',Offence);
-        Image.offender_id=results;
-        sql_helper.add_offender_image(Image);
+        Offence.loc_id=results;
+       
+       
+      }
+
+    
+    });
+   
+    
+      sql_helper.add_offender_image(Image,function(err,results){
+     
+      if (err==undefined){
+        
+        Offence.image_id=results;
+       
+        Offender.image_id=results;
+        console.log('oooo',Offender);
+        sql_helper.add_offender(Offender,function(err,results){
+          if (err==undefined){
+            Offence.offender_id=results;
+           
+          }
+        
+         
         sql_helper.add_victim(Victim,function(err,results){
           console.log('123',Victim);
            console.log(err);
@@ -503,7 +529,7 @@ app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
         
         });
        
-      }
+      });}
 
     
     });
@@ -515,8 +541,7 @@ app.post("/add_offender", upload.single('photo'), (req, res, next)=>{
 
   
  
-   //let Offence=new offence(req.user.user_id,offender_id,loc_id,date_committed,category,is_category_new,victim_id);
- 
+  
   
    
   }
