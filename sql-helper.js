@@ -26,7 +26,7 @@ class sql_helper {
           [type, id, name, email, desg, hashedPassword],
           (err, results) => {
             if (err) {
-              throw err;
+              console.log(err);
             }
           }
         );
@@ -35,7 +35,7 @@ class sql_helper {
           [id],
           (err, results) => {
             if (err) {
-              throw err;
+              console.log(err);
             }
           }
         );
@@ -88,7 +88,7 @@ class sql_helper {
               ],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);
                 }
               }
             );
@@ -116,7 +116,7 @@ class sql_helper {
                     [image_path_new, image_id],
                     (err, results1) => {
                       if (err) {
-                        throw err;
+                        console.log(err);
                       }
                     }
                   );
@@ -128,7 +128,7 @@ class sql_helper {
                   [image_id],
                   (err, results1) => {
                     if (err) {
-                      throw err;
+                      console.log(err);
                     }
                   }
                 );
@@ -140,7 +140,7 @@ class sql_helper {
               [id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);
                 }
               }
             );
@@ -149,7 +149,7 @@ class sql_helper {
               [offender_id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);
                 }
               }
             );
@@ -172,7 +172,7 @@ class sql_helper {
                   [victim_age, victim_gender, victim_id],
                   (err, results1) => {
                     if (err) {
-                      throw err;
+                      console.log(err);
                     }
                   }
                 );
@@ -184,7 +184,7 @@ class sql_helper {
               [victim_id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);
                 }
               }
             );
@@ -195,7 +195,7 @@ class sql_helper {
               [category_id],
               (err, results) => {
                 if (err) {
-                  throw err;
+                  console.log(err);
                 }
                 if (results.rows.length > 0) {
                   var category_name = results.rows[0].category_name;
@@ -211,7 +211,7 @@ class sql_helper {
                           [category_name],
                           (err, results) => {
                             if (err) {
-                              throw err;
+                               console.log(err); console.log(err);;
                             }
                             category_id = results.rows[0].category_id;
                             client.query(
@@ -228,7 +228,7 @@ class sql_helper {
                               ],
                               (err, results1) => {
                                 if (err) {
-                                  throw err;
+                                   console.log(err);;
                                 }
                               }
                             );
@@ -249,7 +249,7 @@ class sql_helper {
                           ],
                           (err, results1) => {
                             if (err) {
-                              throw err;
+                              console.log(err);;
                             }
                           }
                         );
@@ -264,7 +264,7 @@ class sql_helper {
                   [category_id],
                   (err, results1) => {
                     if (err) {
-                      throw err;
+                      console.log(err);;
                     }
                   }
                 );
@@ -281,7 +281,7 @@ class sql_helper {
       [id],
       (err, results) => {
         if (err) {
-          throw err;
+          console.log(err);;
         }
       }
     );
@@ -318,7 +318,7 @@ class sql_helper {
               [id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);;
                 }
               }
             );
@@ -327,7 +327,7 @@ class sql_helper {
               [offender_id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);;
                 }
               }
             );
@@ -337,7 +337,7 @@ class sql_helper {
               [victim_id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                  console.log(err);;
                 }
               }
             );
@@ -348,7 +348,7 @@ class sql_helper {
               [category_id],
               (err, results1) => {
                 if (err) {
-                  throw err;
+                 console.log(err);;
                 }
               }
             );
@@ -373,7 +373,7 @@ class sql_helper {
               [image_id],
               (err, results) => {
                 if (err) {
-                  throw err;
+                   console.log(err);;
                 }
               }
             );
@@ -650,7 +650,7 @@ class sql_helper {
       ],
       (err, results) => {
         if (err) {
-          throw err;
+           console.log(err);;
         }
       }
     );
@@ -712,7 +712,7 @@ class sql_helper {
       ],
       (err, results) => {
         if (err) {
-          throw err;
+           console.log(err);;
         }
 
         return cb(undefined, "success");

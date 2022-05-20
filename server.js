@@ -151,7 +151,8 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
       }
     });
   } else {
-    res.render("error.ejs");
+    var error='No Requests to show'
+    res.render("error.ejs",{error});
   }
 });
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
@@ -172,7 +173,8 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
       }
     });
   } else {
-    res.render("error.ejs");
+    var error='No Requests to show'
+    res.render("error.ejs",{error});
   }
 });
 
@@ -326,7 +328,7 @@ app.post("/users/super", async (req, res) => {
       [type, id, name, email, desg, hashedPassword],
       (err, results) => {
         if (err) {
-          throw err;
+          console.log(err);
         }
 
         req.flash("success_msg", "You are now registered. Please log in");
@@ -354,7 +356,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       console.log("before py", Date.now() - start);
       PythonShell.run("face.py", options, function (err, result) {
         console.log("after py", Date.now() - start);
-        if (err) throw err;
+        if (err)  console.log(err);
         // result is an array consisting of messages collected
         //during execution of script.
         console.log("result: ", result.toString());
