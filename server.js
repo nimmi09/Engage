@@ -151,8 +151,8 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
       }
     });
   } else {
-    var error='No Requests to show'
-    res.render("error.ejs",{error});
+    var error = "No Requests to show";
+    res.render("error.ejs", { error });
   }
 });
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
@@ -173,8 +173,8 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
       }
     });
   } else {
-    var error='No Requests to show'
-    res.render("error.ejs",{error});
+    var error = "No Requests to show";
+    res.render("error.ejs", { error });
   }
 });
 
@@ -356,7 +356,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       console.log("before py", Date.now() - start);
       PythonShell.run("face.py", options, function (err, result) {
         console.log("after py", Date.now() - start);
-        if (err)  console.log(err);
+        if (err) console.log(err);
         // result is an array consisting of messages collected
         //during execution of script.
         console.log("result: ", result.toString());
