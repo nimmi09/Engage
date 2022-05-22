@@ -16,7 +16,9 @@ def face_recog(abc):
     
     #print(func(av))
     if (len(rows) ==0):
-        abc  = "no images to search from"
+        ans = {'type': "face_recognition" ,'image_id': -1 }
+        json_data = json.dumps(ans)
+        print(json_data)
     else:
         
 
