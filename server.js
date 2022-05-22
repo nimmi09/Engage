@@ -10,9 +10,12 @@ const flash = require("express-flash");
 const session = require("express-session");
 require("dotenv").config();
 const { PythonShell } = require("python-shell");
+
 const app = express();
 const fs = require("fs");
 const path = require("path");
+
+let pyshell = new PythonShell('face.py', { mode: 'json'});
 
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
@@ -85,17 +88,17 @@ app.use(passport.session());
 app.use(flash());
 
 app.get("/", (req, res) => {
-  res.render("index.ejs");
+  return res.render("index.ejs");
 });
 
 app.get("/users/register", checkAuthenticated, (req, res) => {
-  res.render("register.ejs");
+  return res.render("register.ejs");
 });
 app.get("/users/super", checkNotAuthenticated, (req, res) => {
-  res.render("super.ejs");
+  return res.render("super.ejs");
 });
 app.get("/search", checkNotAuthenticated, (req, res) => {
-  res.render("search.ejs");
+  return res.render("search.ejs");
 });
 app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
   if (
@@ -107,14 +110,14 @@ app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
     sql_helper.accept_user(req.params.uid);
     console.log("hhiii");
     if (req.params.type == "user") {
-      res.redirect("/users/requests/user");
+      return res.redirect("/users/requests/user");
     } else if (req.params.type == "admin") {
-      res.redirect("/users/requests/admin");
+      return res.redirect("/users/requests/admin");
     }
   } else if (req.params.type == "offence") {
     sql_helper.accept_offence(req.params.uid);
 
-    res.redirect("/offence_requests");
+    return res.redirect("/offence_requests");
   }
 });
 
@@ -126,15 +129,15 @@ app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
   ) {
     sql_helper.reject_user(req.params.uid);
     if (type == "user") {
-      res.redirect("/users/requests/user");
+      return res.redirect("/users/requests/user");
     } else if (type == "admin") {
-      res.redirect("/users/requests/admin");
+      return res.redirect("/users/requests/admin");
     }
   }
   if (req.params.type == "offence") {
     sql_helper.reject_offence(req.params.uid);
 
-    res.redirect("/offence_requests");
+    return res.redirect("/offence_requests");
   }
 });
 
@@ -147,12 +150,12 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
       if (err == undefined) {
         requests = Array.from(results.rows);
 
-        res.render("requests.ejs", { requests });
+        return res.render("requests.ejs", { requests });
       }
     });
   } else {
     var error = "No Requests to show";
-    res.render("error.ejs", { error });
+    return res.render("error.ejs", { error });
   }
 });
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
@@ -168,33 +171,38 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
         if (offences.length == 0) {
           var error = 'No Requests to show';
     console.log(error);
-    res.render("error.ejs", {error});
+    return res.render("error.ejs", {error});
         } else {
-          res.render("offence_requests.ejs", { offences });
+          return res.render("offence_requests.ejs", { offences });
         }
       }
     });
   } else {
     var error = 'Not Authorized';
     console.log(error);
-    res.render("error.ejs", {error});
+    return res.render("error.ejs", {error});
   }
 });
 
 app.get("/users/login", checkAuthenticated, (req, res) => {
-  res.render("login.ejs");
+  return res.render("login.ejs");
 });
 
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  res.render("dashboard.ejs");
+  return res.render("dashboard.ejs");
 });
 
 app.get("/users/admin", checkNotAuthenticated, (req, res) => {
-  res.render("admin.ejs");
+  return res.render("admin.ejs");
 });
 
+app.get("/dummy", checkNotAuthenticated, (req, res) => {
+  return res.redirect("/home");
+});
+
+
 app.get("/users/superd", checkNotAuthenticated, (req, res) => {
-  res.render("superd.ejs");
+  return res.render("superd.ejs");
 });
 app.get("/add_offence", checkNotAuthenticated, (req, res) => {
   sql_helper.get_offence_categories(function (err, results) {
@@ -205,7 +213,7 @@ app.get("/add_offence", checkNotAuthenticated, (req, res) => {
         if (err == undefined) {
           var locations = Array.from(results.rows);
 
-          res.render("add_offence.ejs", { locations, category });
+          return res.render("add_offence.ejs", { locations, category });
         }
       });
     }
@@ -213,19 +221,19 @@ app.get("/add_offence", checkNotAuthenticated, (req, res) => {
 });
 app.get("/home", (req, res) => {
   if (req.user.type == "super") {
-    res.redirect("/users/superd");
+    return res.redirect("/users/superd");
   }
   else if (req.user.type == "user") {
-    res.redirect("/users/dashboard");
+    return res.redirect("/users/dashboard");
   }
   else if (req.user.type == "admin") {
-    res.redirect("/users/admin");
+    return res.redirect("/users/admin");
   }
  
 });
 app.get("/users/logout", (req, res) => {
   req.logout();
-  res.render("index.ejs", { message: "You have logged out successfully" });
+  return res.render("index.ejs", { message: "You have logged out successfully" });
 });
 
 app.post("/users/register", async (req, res) => {
@@ -237,7 +245,7 @@ app.post("/users/register", async (req, res) => {
   }
 
   if (errors.length > 0) {
-    res.render("register.ejs", {
+    return res.render("register.ejs", {
       errors,
       type,
       name,
@@ -269,7 +277,7 @@ app.post("/users/register", async (req, res) => {
                   "success_msg",
                   "You are now registered. Please log in"
                 );
-                res.redirect("/users/login");
+                return res.redirect("/users/login");
               }
             }
           });
@@ -287,13 +295,13 @@ app.post(
   }),
   (req, res) => {
     if (req.user.type == "super") {
-      res.redirect("/users/superd");
+      return res.redirect("/users/superd");
     }
     else if (req.user.type == "user") {
-      res.redirect("/users/dashboard");
+      return res.redirect("/users/dashboard");
     }
     else if (req.user.type == "admin") {
-      res.redirect("/users/admin");
+      return res.redirect("/users/admin");
     }
   }
 );
@@ -309,7 +317,7 @@ function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/users/login");
+  return res.redirect("/users/login");
 }
 
 app.post("/users/super", async (req, res) => {
@@ -322,7 +330,7 @@ app.post("/users/super", async (req, res) => {
 
   if (errors.length > 0) {
     //console.log('123')
-    res.render("super.ejs", {
+    return res.render("super.ejs", {
       errors,
       type,
       id,
@@ -346,38 +354,112 @@ app.post("/users/super", async (req, res) => {
         }
 
         req.flash("success_msg", "You are now registered. Please log in");
-        res.redirect("/users/login");
+        return res.redirect("/users/login");
       }
     );
   }
 });
 
 app.post("/search", searchupload.single("photo"), (req, res) => {
-  var start = Date.now();
+  var val = 0;
+ var start = Date.now()
   sql_helper.get_images(function (err, results) {
-    console.log("callback", Date.now() - start);
-
+   
     if (err == undefined) {
-      var images = results;
-      var rows = JSON.stringify(images);
-
+       var images = results;
+       var rows = JSON.stringify(images);
+       
+    
       let options = {
-        mode: "text",
-        pythonOptions: ["-u"], // get print results in real-time
-        //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
-        args: [req.file.path, rows], //An argument which can be accessed in the script using sys.argv[1]
-      };
-      console.log("before py", Date.now() - start);
-      PythonShell.run("face.py", options, function (err, result) {
-        console.log("after py", Date.now() - start);
-        if (err) console.log(err);
-        // result is an array consisting of messages collected
-        //during execution of script.
-        console.log("result: ", result.toString());
+         mode: "text",
+         pythonOptions: ["-u"], // get print results in real-time
+         //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
+         args: [req.file.path, rows], //An argument which can be accessed in the script using sys.argv[1]
+         };
 
-        res.send(result.toString());
-        console.log("completed", Date.now() - start);
-      });
+
+// sends a message to the Python script via stdin
+//pyshell.send(JSON.stringify([1,2,3,4,5]));
+console.log("sending to python")
+pyshell.send({type: 'face_recognition',path: req.file.path, rows: images});
+//pyshell.send({ command: "face_search", args: options.args});
+
+pyshell.on('message', function (message) {
+  // received a message sent from the Python script (a simple "print" statement)
+  //console.log('abcfdsdhflsgh',message['type']);
+  //console.log('val', val); 
+  val++;
+  if(val==1 && message['type']=='face_recognition'){
+    var image_id=message['image_id']
+    console.log(image_id);
+  return res.render('message.ejs', {message : image_id});
+  }
+});
+
+pyshell.on('error', function (error) {
+  // received a message sent from the Python script (a simple "print" statement)
+  console.log('Errororororr ',error);
+});
+
+pyshell.on('stderr', function (stderr) {
+  // received a message sent from the Python script (a simple "print" statement)
+  console.log('Errororororr ',stderr);
+});
+
+pyshell.on('pythonError', function (pythonError) {
+  // received a message sent from the Python script (a simple "print" statement)
+  console.log('Errororororr ',pythonError);
+});
+// end the input stream and allow the process to exit
+// pyshell.end(function (err,code,signal) {
+//   if (err) console.log( err);
+//   console.log('The exit code was: ' + code);
+//   console.log('The exit signal was: ' + signal);
+//   console.log('finished');
+// });
+
+
+      // var images = results;
+      // var rows = JSON.stringify(images);
+    
+
+      // let options = {
+      //   mode: "text",
+      //   pythonOptions: ["-u"], // get print results in real-time
+      //   //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
+      //   args: [req.file.path, rows], //An argument which can be accessed in the script using sys.argv[1]
+      // };
+      // let shell = new PythonShell('face1.py', { mode: 'text'});
+      // //shell.send({ command: "face_search", args: options.args});
+      // shell.send("hello");
+      // shell.on('message', function (message) {
+      //   // handle message (a line of text from stdout, parsed as JSON)
+      //   console.log(message);
+      // });
+      // shell.end();
+      // PythonShell.run("face.py", options, function (err, result) {
+        
+      //   if (err) console.log(err);
+      //   // result is an array consisting of messages collected
+      //   //during execution of script.
+      //   else {
+      //     var ans=parseInt(result.toString());
+      //    if (ans==-1){
+      //     return res.send(result.toString());
+      //    }
+      //    else{
+      //      sql_helper.get_offender_from_image_id(image_id, function (err, results) {
+      //       if (err == undefined) {
+      //         var offender = Array.from(results.rows);
+      //         return res.render(search_results.ejs,{offender});
+      //       }
+      //     });
+      //    }
+
+        
+      // }
+       
+      // });
     }
   });
 });
@@ -435,28 +517,28 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
       Offence.image_id = results;
 
       Offender.image_id = results;
-      console.log("oooo", Offender);
+      
       sql_helper.add_offender(Offender, function (err, results) {
         if (err == undefined) {
           Offence.offender_id = results;
         }
 
         sql_helper.add_victim(Victim, function (err, results) {
-          console.log("123", Victim);
+          
           console.log(err);
           if (err == undefined) {
             Offence.victim_id = results;
-            console.log("4", Offence);
+            
             sql_helper.add_offence_details(Offence);
             req.flash("success_msg", "Offence Details Added");
             if (req.user.type == "super") {
-              res.redirect("/users/superd");
+              return res.redirect("/users/superd");
             }
             else if (req.user.type == "user") {
-              res.redirect("/users/dashboard");
+              return res.redirect("/users/dashboard");
             }
             else if (req.user.type == "admin") {
-              res.redirect("/users/admin");
+              return res.redirect("/users/admin");
             }
           }
         });
