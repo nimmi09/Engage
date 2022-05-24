@@ -13,12 +13,10 @@ class sql_helper {
           console.log(err);
         }
         var type = results.rows[0].type;
-
         var name = results.rows[0].user_name;
         var email = results.rows[0].email;
         var desg = results.rows[0].user_designation;
         var hashedPassword = results.rows[0].password;
-
         console.log(type, id, name, email, desg, hashedPassword);
         client.query(
           `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
@@ -57,7 +55,6 @@ class sql_helper {
         var date_committed = results.rows[0].date_committed;
         var victim_id = results.rows[0].victim_id;
         var category_id = results.rows[0].category_id;
-
         client.query(
           `SELECT * FROM tempoffender
           WHERE offender_id = $1`,
@@ -70,10 +67,8 @@ class sql_helper {
             var offender_age = results.rows[0].offender_age;
             var offender_name = results.rows[0].offender_name;
             var offender_gender = results.rows[0].offender_gender;
-
             var date_added = results.rows[0].date_added;
             var image_id = results.rows[0].image_id;
-
             client.query(
               `INSERT INTO offender (user_id,offender_age,offender_name,offender_gender,offender_id,date_added,image_id)
                 VALUES ($1, $2, $3, $4,$5,$6,$7)`,
@@ -92,7 +87,6 @@ class sql_helper {
                 }
               }
             );
-
             //accepting image
             client.query(
               `SELECT * FROM tempimages
@@ -105,7 +99,6 @@ class sql_helper {
                 for (let i = 0; i < results.rows.length; i++) {
                   var image_path = results.rows[i].path;
                   var image_id = results.rows[i].image_id;
-
                   //moving file to permanent folder
                   var image_path_new = file_utility.movefile(image_path);
                   console.log(image_path_new);
@@ -121,7 +114,6 @@ class sql_helper {
                     }
                   );
                 }
-
                 //deleting file from temporary database storage
                 client.query(
                   `DELETE from tempimages WHERE image_id=$1`,
@@ -134,7 +126,6 @@ class sql_helper {
                 );
               }
             );
-
             client.query(
               `DELETE FROM  tempoffence  WHERE offence_id=$1`,
               [id],
@@ -153,7 +144,6 @@ class sql_helper {
                 }
               }
             );
-
             client.query(
               `SELECT * FROM tempvictim
               WHERE victim_id = $1`,
@@ -162,10 +152,8 @@ class sql_helper {
                 if (err) {
                   console.log(err);
                 }
-
                 var victim_age = results.rows[0].victim_age;
                 var victim_gender = results.rows[0].victim_gender;
-
                 client.query(
                   `INSERT INTO victim(victim_age,victim_gender,victim_id)
                         VALUES ($1, $2,$3)`,
@@ -178,7 +166,6 @@ class sql_helper {
                 );
               }
             );
-
             client.query(
               `DELETE from tempvictim WHERE victim_id=$1`,
               [victim_id],
@@ -188,7 +175,6 @@ class sql_helper {
                 }
               }
             );
-
             client.query(
               `SELECT * FROM tempoffence_category
                   WHERE category_id = $1`,
@@ -199,7 +185,6 @@ class sql_helper {
                 }
                 if (results.rows.length > 0) {
                   var category_name = results.rows[0].category_name;
-
                   client.query(
                     `INSERT INTO offence_category(category_id,category_name)
                             VALUES ($1, $2)`,
@@ -211,7 +196,6 @@ class sql_helper {
                           [category_name],
                           (err, results) => {
                             if (err) {
-                              console.log(err);
                               console.log(err);
                             }
                             category_id = results.rows[0].category_id;
@@ -235,30 +219,31 @@ class sql_helper {
                             );
                           }
                         );
-                      } else {
-                        client.query(
-                          `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
-                            VALUES ($1, $2, $3, $4,$5,$6,$7)`,
-                          [
-                            user_id_offence,
-                            offender_id,
-                            loc_id,
-                            date_committed,
-                            id,
-                            victim_id,
-                            category_id,
-                          ],
-                          (err, results1) => {
-                            if (err) {
-                              console.log(err);
-                            }
-                          }
-                        );
                       }
                     }
                   );
+                } else {
+                  console.log("else");
+                  client.query(
+                    `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
+                      VALUES ($1, $2, $3, $4,$5,$6,$7)`,
+                    [
+                      user_id_offence,
+                      offender_id,
+                      loc_id,
+                      date_committed,
+                      id,
+                      victim_id,
+                      category_id,
+                    ],
+                    (err, results) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                      console.log("mnmnmnm", results);
+                    }
+                  );
                 }
-
                 client.query(
                   `DELETE from tempoffence_category
               WHERE category_id = $1`,
@@ -287,7 +272,6 @@ class sql_helper {
       }
     );
   }
-
   static reject_offence(id) {
     client.query(
       `SELECT * FROM tempoffence
@@ -297,12 +281,9 @@ class sql_helper {
         if (err) {
           console.log(err);
         }
-
         var offender_id = results.rows[0].offender_id;
-
         var victim_id = results.rows[0].victim_id;
         var category_id = results.rows[0].category_id;
-
         client.query(
           `SELECT * FROM tempoffender
           WHERE offender_id = $1`,
@@ -311,9 +292,7 @@ class sql_helper {
             if (err) {
               console.log(err);
             }
-
             var image_id = results.rows[0].image_id;
-
             client.query(
               `DELETE FROM  tempoffence  WHERE offence_id=$1`,
               [id],
@@ -332,7 +311,6 @@ class sql_helper {
                 }
               }
             );
-
             client.query(
               `DELETE from tempvictim WHERE victim_id=$1`,
               [victim_id],
@@ -342,7 +320,6 @@ class sql_helper {
                 }
               }
             );
-
             client.query(
               `DELETE from tempoffence_category
               WHERE category_id = $1`,
@@ -353,7 +330,6 @@ class sql_helper {
                 }
               }
             );
-
             client.query(
               `SELECT * FROM tempimages
                 WHERE image_id = $1`,
@@ -362,12 +338,10 @@ class sql_helper {
                 if (err) {
                   console.log(err);
                 }
-
                 var images = Array.from(results.rows);
                 file_utility.deletefile(images);
               }
             );
-
             //deleting rejected offender's image paths from temporary storage
             client.query(
               `DELETE from tempimages WHERE image_id=$1`,
@@ -387,12 +361,10 @@ class sql_helper {
     client.query(
       `SELECT * FROM tempusers where type=$1`,
       [user_type],
-
       (err, results) => {
         if (err) {
           return cb(err);
         }
-
         return cb(undefined, results);
       }
     );
@@ -400,7 +372,6 @@ class sql_helper {
   static get_offence_requests = function (cb) {
     client.query(
       `SELECT * FROM tempoffence`,
-
       (err, offence_results) => {
         if (err) {
           console.log(err);
@@ -411,16 +382,14 @@ class sql_helper {
         }
         for (let i = 0; i < offence_results.rows.length; i++) {
           let Showoffence = new showoffence();
-
           var user_id_offence = offence_results.rows[i].user_id;
           var offender_id = offence_results.rows[i].offender_id;
           var loc_id = offence_results.rows[i].loc_id;
-          var date_committed = offence_results.rows[i].date_committed;
           var victim_id = offence_results.rows[i].victim_id;
           var category_id = offence_results.rows[i].category_id;
           var offence_id = offence_results.rows[i].offence_id;
           Showoffence.user_id = user_id_offence;
-          Showoffence.date_committed = date_committed;
+          Showoffence.date_committed = offence_results.rows[i].date_committed;
           Showoffence.offence_id = offence_id;
           client.query(
             `SELECT * FROM tempoffender
@@ -430,20 +399,12 @@ class sql_helper {
               if (err) {
                 console.log(err);
               }
-
-              var user_id_offender = results.rows[0].user_id;
-              var offender_age = results.rows[0].offender_age;
-              var offender_name = results.rows[0].offender_name;
-              var offender_gender = results.rows[0].offender_gender;
-
-              var date_added = results.rows[0].date_added;
               var image_id = results.rows[0].image_id;
-
-              Showoffence.offender_name = offender_name;
-
-              Showoffence.offender_gender = offender_gender;
-              Showoffence.offender_age = offender_age;
-
+              Showoffence.offender_name = results.rows[0].offender_name;
+              Showoffence.offender_id = results.rows[0].offender_id;
+              Showoffence.offender_gender = results.rows[0].offender_gender;
+              Showoffence.offender_age = results.rows[0].offender_age;
+              Showoffence.date_added = results.rows[0].date_added;
               client.query(
                 `SELECT * FROM tempvictim
               WHERE victim_id = $1`,
@@ -452,15 +413,21 @@ class sql_helper {
                   if (err) {
                     console.log(err);
                   }
-
-                  var victim_age = results.rows[0].victim_age;
-                  var victim_gender = results.rows[0].victim_gender;
-
-                  Showoffence.victim_age = victim_age;
-                  Showoffence.victim_gender = victim_gender;
+                  Showoffence.victim_age = results.rows[0].victim_age;
+                  Showoffence.victim_gender = results.rows[0].victim_gender;
                 }
               );
-
+              client.query(
+                `SELECT * FROM tempimages
+              WHERE image_id = $1`,
+                [image_id],
+                (err, results) => {
+                  if (err) {
+                    console.log(err);
+                  }
+                  Showoffence.image_path = results.rows[0].path;
+                }
+              );
               client.query(
                 `SELECT * FROM tempoffence_category
                   WHERE category_id = $1`,
@@ -470,8 +437,7 @@ class sql_helper {
                     console.log(err);
                   }
                   if (results.rows.length > 0) {
-                    var category_name = results.rows[0].category_name;
-                    Showoffence.category_name = category_name;
+                    Showoffence.category_name = results.rows[0].category_name;
                   } else {
                     client.query(
                       `SELECT * FROM offence_category
@@ -481,8 +447,8 @@ class sql_helper {
                         if (err) {
                           console.log(err);
                         }
-                        var category_name = results.rows[0].category_name;
-                        Showoffence.category_name = category_name;
+                        Showoffence.category_name =
+                          results.rows[0].category_name;
                       }
                     );
                   }
@@ -496,12 +462,8 @@ class sql_helper {
                   if (err) {
                     console.log(err);
                   }
-
-                  var region = results.rows[0].region;
-                  Showoffence.region = region;
-
+                  Showoffence.region = results.rows[0].region;
                   offences.push(Showoffence);
-
                   if (i == offence_results.rows.length - 1) {
                     return cb(undefined, offences);
                   }
@@ -516,12 +478,10 @@ class sql_helper {
   static get_offence_categories = function (cb) {
     client.query(
       `SELECT * FROM offence_category`,
-
       (err, results) => {
         if (err) {
           return cb(err);
         }
-
         return cb(undefined, results);
       }
     );
@@ -529,22 +489,18 @@ class sql_helper {
   static get_locations = function (cb) {
     client.query(
       `SELECT * FROM location`,
-
       (err, results) => {
         if (err) {
           return cb(err);
         }
-
         return cb(undefined, results);
       }
     );
   };
   static add_offender = function (Offender, cb) {
-    console.log("add_offender reached");
     client.query(
       `INSERT INTO tempoffender (user_id,offender_age,offender_gender,date_added,offender_name,image_id)
             VALUES ($1, $2, $3, $4,$5,$6) RETURNING offender_id`,
-
       [
         Offender.user_id,
         Offender.age,
@@ -559,7 +515,6 @@ class sql_helper {
           return cb(err);
         }
         var offender_id = results.rows[0].offender_id;
-
         return cb(undefined, offender_id);
       }
     );
@@ -592,7 +547,6 @@ class sql_helper {
       }
     );
   };
-
   static get_category_id = function (Category, cb) {
     client.query(
       `SELECT category_id from offence_category where category_name=$1 `,
@@ -601,7 +555,7 @@ class sql_helper {
         if (err) {
           return cb(err);
         }
-
+console.log(results,Category.category_name);
         var category_id = results.rows[0].category_id;
         return cb(undefined, category_id);
       }
@@ -618,7 +572,6 @@ class sql_helper {
         console.log(Location);
         console.log(results, results.rows[0]);
         var loc_id = results.rows[0].loc_id;
-
         return cb(undefined, loc_id);
       }
     );
@@ -675,7 +628,6 @@ class sql_helper {
   static get_images = function (cb) {
     client.query(
       `SELECT * from images `,
-
       (err, results) => {
         if (err) {
           return cb(err);
@@ -685,18 +637,24 @@ class sql_helper {
       }
     );
   };
-
-  static get_users = function (email, cb) {
+  static get_users_and_requests = function (email, cb) {
     client.query(
       `SELECT * from users where email=$1 `,
       [email],
-
       (err, results) => {
         if (err) {
           return cb(err);
         }
-        //requests=Array.from(results.rows);
-        return cb(undefined, results);
+        client.query(
+          `SELECT * from tempusers where email=$1 `,
+          [email],
+          (err, results1) => {
+            if (err) {
+              return cb(err);
+            }
+            return cb(undefined, results, results1);
+          }
+        );
       }
     );
   };
@@ -715,10 +673,170 @@ class sql_helper {
         if (err) {
           console.log(err);
         }
-
         return cb(undefined, "success");
       }
     );
   }
+  static get_profile_from_image_id(image_id, cb) {
+    let Showoffence = new showoffence();
+    client.query(
+      `Select * from offender where image_id =$1`,
+      [image_id],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+        var offender_id = results.rows[0].offender_id;
+        Showoffence.offender_id = results.rows[0].offender_id;
+        Showoffence.offender_age = results.rows[0].offender_age;
+        Showoffence.offender_name = results.rows[0].offender_name;
+        Showoffence.offender_gender = results.rows[0].offender_gender;
+        Showoffence.date_added = results.rows[0].date_added;
+        Showoffence.user_id = results.rows[0].user_id;
+        client.query(
+          `Select * from offence where offender_id=$1`,
+          [offender_id],
+          (err, results) => {
+            if (err) {
+              console.log(err);
+            }
+            var category_id = results.rows[0].category_id;
+            var victim_id = results.rows[0].victim_id;
+            var loc_id = results.rows[0].loc_id;
+            var date_committed = results.rows[0].date_committed;
+            Showoffence.date_committed = results.rows[0].date_committed;
+            console.log(typeof date_committed, date_committed);
+            Showoffence.offence_id = results.rows[0].offence_id;
+            client.query(
+              `Select * from victim where victim_id=$1`,
+              [victim_id],
+              (err, results) => {
+                if (err) {
+                  console.log(err);
+                }
+                Showoffence.victim_age = results.rows[0].victim_age;
+                Showoffence.victim_gender = results.rows[0].victim_gender;
+              }
+            );
+            client.query(
+              `Select * from offence_category where category_id=$1`,
+              [category_id],
+              (err, results) => {
+                if (err) {
+                  console.log(err);
+                }
+                Showoffence.category_name = results.rows[0].category_name;
+              }
+            );
+            client.query(
+              `Select * from images where image_id=$1`,
+              [image_id],
+              (err, results) => {
+                if (err) {
+                  console.log(err);
+                }
+                var image_path = results.rows[0].path;
+                var image_path_split = image_path.split("/");
+                var file_name = image_path_split[image_path_split.length - 1];
+                Showoffence.image_path = file_name;
+              }
+            );
+            client.query(
+              `Select * from location where loc_id=$1`,
+              [loc_id],
+              (err, results) => {
+                if (err) {
+                  console.log(err);
+                }
+                Showoffence.region = results.rows[0].region;
+                console.log(Showoffence);
+                return cb(undefined, Showoffence);
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+static delete_offence(offender_id,offence_id,cb) {
+  client.query(
+    `SELECT * FROM offence
+    WHERE offender_id = $1 AND offence_id=$2`,
+    [offender_id,offence_id],
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+     
+      var victim_id = results.rows[0].victim_id;
+     
+      client.query(
+        `SELECT * FROM offender
+        WHERE offender_id = $1`,
+        [offender_id],
+        (err, results) => {
+          if (err) {
+            console.log(err);
+          }
+          var image_id = results.rows[0].image_id;
+          client.query(
+            `DELETE FROM  offence
+            WHERE offender_id = $1 AND offence_id= $2`,
+            [offender_id,offence_id],
+            (err, results1) => {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+          client.query(
+            `DELETE from offender WHERE offender_id=$1`,
+            [offender_id],
+            (err, results1) => {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+          client.query(
+            `DELETE from victim WHERE victim_id=$1`,
+            [victim_id],
+            (err, results1) => {
+              if (err) {
+                console.log(err);
+              }
+            }
+          );
+         
+          client.query(
+            `SELECT * FROM images
+              WHERE image_id = $1`,
+            [image_id],
+            (err, results) => {
+              if (err) {
+                console.log(err);
+              }
+            
+              var images = Array.from(results.rows);
+              console.log(images,image_id);
+              file_utility.deletefile(images);
+            }
+          );
+        
+          client.query(
+            `DELETE from images WHERE image_id=$1`,
+            [image_id],
+            (err, results) => {
+              if (err) {
+                console.log(err);
+              }
+              return cb(undefined,'deleted');
+            }
+          );
+        }
+      );
+    }
+  );
+}
 }
 module.exports = { sql_helper };
