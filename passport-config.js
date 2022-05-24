@@ -2,10 +2,7 @@ const LocalStrategy = require("passport-local").Strategy;
 //const { pool } = require("./dbConfig");
 const { client } = require("./database");
 const bcrypt = require("bcrypt");
-
 function initialize(passport) {
-  console.log("Initialized");
-
   const authenticateUser = (email, password, done) => {
     client.query(
       `SELECT * FROM users WHERE email = $1`,
@@ -14,10 +11,8 @@ function initialize(passport) {
         if (err) {
           throw err;
         }
-
         if (results.rows.length > 0) {
           const user = results.rows[0];
-
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {
               console.log(err);
@@ -38,7 +33,6 @@ function initialize(passport) {
       }
     );
   };
-
   passport.use(
     new LocalStrategy(
       { usernameField: "email", passwordField: "password" },
@@ -50,10 +44,8 @@ function initialize(passport) {
   // to the session as req.session.passport.user = {}. Here for instance, it would be (as we provide
   //   the user id as the key) req.session.passport.user = {id: 'xyz'}
   passport.serializeUser((user, done) => done(null, user.user_id));
-
   // In deserializeUser that key is matched with the in memory array / database or any data resource.
   // The fetched object is attached to the request object as req.user
-
   passport.deserializeUser((id, done) => {
     client.query(
       `SELECT * FROM users WHERE user_id = $1`,
@@ -62,11 +54,9 @@ function initialize(passport) {
         if (err) {
           return done(err);
         }
-        console.log(`ID is ${results.rows[0].id}`);
         return done(null, results.rows[0]);
       }
     );
   });
 }
-
 module.exports = initialize;

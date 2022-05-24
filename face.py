@@ -21,7 +21,6 @@ def face_recog(abc):
         print(json_data)
     else:
         
-
         images=[]
         image_id=[]
         
@@ -44,11 +43,9 @@ def face_recog(abc):
                 
             return encodeList
         encodeListKnown = findEncodings(images)
-
         matches = face_recognition.compare_faces(encodeListKnown,encodeTest)
         faceDis = face_recognition.face_distance(encodeListKnown,encodeTest)
         
-
         matchIndex = np.argmin(faceDis)
         
         ans = {'type': "face_recognition" ,'image_id': -1 }
@@ -56,15 +53,10 @@ def face_recog(abc):
             ans['image_id'] = image_id[matchIndex]
         json_data = json.dumps(ans)
         print(json_data)
-
 while True:
     inp = input(" ")
     abc=json.loads(inp)
     if(abc['type']=="face_recognition"):
         face_recog(abc)
     
-
-
-
-
     

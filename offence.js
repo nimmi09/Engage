@@ -12,7 +12,6 @@ class offence {
     this.loc_id = loc_id;
     this.date_committed = date_committed;
     this.category_id = category_id;
-
     this.victim_id = victim_id;
   }
 }
