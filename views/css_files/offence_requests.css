@@ -9,11 +9,23 @@
   background: #8e44ad;
   color: #fff;
 }
-html,body{
-  display: grid;
-  height: 100%;
-  place-items: center;
-  background: #8e44ad;
+.container-login100 {
+  width: 100%;  
+  min-height: 90.8vh;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background: #9053c7;
+  background: -webkit-linear-gradient(-135deg,#ffffff, #c850c0, #4158d0,#ffffff);
+  background: -o-linear-gradient(-135deg, #ffffff,#c850c0, #4158d0,#ffffff);
+  background: -moz-linear-gradient(-135deg,  #ffffff,#c850c0, #4158d0,#ffffff);
+  background: linear-gradient(-135deg,  #ffffff,#c850c0, #4158d0,#ffffff);
 }
 .container{
   max-width: 1100px;
@@ -77,7 +89,7 @@ color: #17c0eb
   justify-content: space-between;
   width: 100%;
 }
-.btns button{
+.btns a{
   background: #8e44ad;
   width: 100%;
   padding: 9px 9px;
@@ -89,20 +101,21 @@ color: #17c0eb
   font-weight: 400;
   color: #8e44ad;
   transition: all 0.3s linear;
+  text-decoration: none;
 }
-.btns button:first-child{
+.btns a:first-child{
   background: none;
   margin-right: 5px;
 }
-.btns button:last-child{
+.btns a:last-child{
   color: #fff;
   margin-left: 5px;
 }
-.btns button:first-child:hover{
+.btns a:first-child:hover{
   background: #8e44ad;
   color: #fff;
 }
-.btns button:hover{
+.btns a:hover{
   color: #fff;
 }
 @media (max-width:1045px){

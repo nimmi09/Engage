@@ -1,1 +1,25 @@
-<a href="/users/logout">logout</a>
+<%- include('partials/header') %> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
+<link rel="stylesheet" type="text/css" href="/css_files/dashboard.css">
+<% if(messages.success_msg) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong><%= messages.success_msg %></strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </button>
+</div>
+  <% } %>   
+ 
+  <% if (messages.error_msg) { %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong> <%= messages.error_msg%></strong>
+    
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+       
+     
+     
+  </div>
+    <% } %>  
+  
+    <div class="container-login100">
+    
+    </div>

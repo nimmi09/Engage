@@ -1,4 +1,3 @@
-
 <h1>Register</h1>
 <ul>
   <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
@@ -8,8 +7,6 @@
 <form action="/users/super" method="POST">
   <div>
     <input type="radio" name="type" value="super"> Super
-
-
   </div>
   <div>
     <label for="id">id</label>
@@ -19,7 +16,6 @@
     <label for="name">Name</label>
     <input type="text" id="name" name="name" required>
   </div>
-
   <div>
     <label for="email">Email</label>
     <input type="email" id="email" name="email" required>

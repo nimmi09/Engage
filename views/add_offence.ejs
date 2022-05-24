@@ -3,41 +3,115 @@
 <head>
    
     <meta charset="utf-8">
-   
+    <link rel="stylesheet" type="text/css" href="/css_files/add_offence.css">
     
 </head>
 <body>
 <%- include('partials/header') %> 
 <form action="/add_offence" method="post" enctype="multipart/form-data" >
-           <div>
-              <label for="name">Name</label>
-              <input type="text" id="name" name="name" required>
-            </div>
+  <div class="limiter">
+  <div class="container-login100">
+    <div class="wrap-login100">
+      <span class="login100-form-title">
+       Report Offence
+      </span>
+      <div class="wrap-input100" >
+       
+        <input class="input100" type="text" id="name" name="name"  placeholder="Name" required>
+       
+     </div>
+     <div class="wrap-input100"  >
+       
+      <input class="input100" type="text" id="age" name="age" placeholder="Age" required>
+     
+   </div>
+   <div class="wrap-input101 input102"  >
+     Offender Gender
+    <input class="gender"  type="radio" name="gender" value="Male" required> Male
+    <input class="gender_internal" type="radio" name="gender" value="Female"> Female
+    <input class="gender_internal" type="radio" name="gender" value="Other"> Other    
+   
+   
+ </div>
+ <div class="wrap-input100"  >
+  <input class="input101"  type="file" accept="image/*" name="photo"  required>
+ 
+</div>
+<div class="wrap-input100 " >
+  <input class="input100"  placeholder="Date of crime"  type="text" onfocus="(this.type='date')" id="date_committed" name="date_committed" required>
+  
+  
+</div>
+<div class="wrap-input100 " >
+ 
+  <select class="input100"  name="category" id="category" onchange="showcategory(this.options[this.selectedIndex].value)" required>
+    <option  selected="selected">Offence Category</option>
+  
+      <% for (var i = 0; i < category.length ; i++) { %>
+       
+          <option  value= "<%= category[i].category_name %>" > <%= category[i].category_name %> </option>
+         
+         
+      <% } %>
+     
+  
+  
+   
+   
+    <option value="OtherCategory" >Other Category</option>
+    </select>
+    <div id="div1"></div>
+</div>
           
-            <div>
-              <label for="age">Age</label>
-              <input type="text" id="age" name="age" required>
-            </div>
+<div class="wrap-input100 " >
+  <select class="input100"  name="region" id="region" required>
+    <option selected="selected">Region</option>
+  
+      <% for (var i = 0; i < locations.length ; i++) { %>
+       
+          <option value= "<%= locations[i].region%>"> <%= locations[i].region %> </option>
+         
+         
+      <% } %>
+     
+  
+ 
+  </select>
+</div>
+          
+<div class="wrap-input100 " >
+ 
+  <input class="input100" type="text" id="victim_age" name="victim_age"  placeholder="Victim Age" required>
+</div>
+<div class="wrap-input101 input102 " >
+ Victim Gender
+    <input  class="gender"  type="radio" name="victim_gender" value="Male" required> Male
+<input class="gender_internal" type="radio" name="victim_gender" value="Female"> Female
+<input class="gender_internal" type="radio" name="victim_gender" value="Other"> Other
+</div>
+   
+   
+<div class="container-login100-form-btn">
+  <button class="login100-form-btn" type="submit">
+    Report Offence
+  </button>
+</div>
+    
+ 
+ 
+</form>
+</body>
+</html>       
+          
            
-            <div>
-                <input type="radio" name="gender" value="male"> Male
-            <input type="radio" name="gender" value="female"> Female
-            <input type="radio" name="gender" value="other"> Other
+          
             
-
-
-              </div>
-              <div>
-                <input type="file" accept="image/*" name="photo" >
-              </div>
-            
-              <div>
-                <input type="date" id="date_committed" name="date_committed">
-              </div>
-              
+  </div>
+  </div>
+  </div>
               <script type="text/javascript">
                 function showcategory(name){
-                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='Other: <input type="text" id="othercategoryinput" name="othercategory" onblur="check_repeats(<%= JSON.stringify(category) %>)"/>';
+                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='<input type="text" id="othercategoryinput" name="othercategory" class="input100" placeholder= "New Category" onblur="check_repeats(<%= JSON.stringify(category) %>)"/>';
                   else   document.getElementById('div1').innerHTML='';
                 }
                 function titleCase(str) {
@@ -58,7 +132,6 @@
                     document.getElementById('othercategoryinput').value='';
                     alert("Entered category already exists.");
                   
-
                    }
                    
                  
@@ -68,71 +141,4 @@
               
                 </script>
                 
-                <select name="category" id="category" onchange="showcategory(this.options[this.selectedIndex].value)">
-                <option selected="selected">Offence Category</option>
               
-                  <% for (var i = 0; i < category.length ; i++) { %>
-                   
-                      <option value= <%= category[i].category_name%> > <%= category[i].category_name %> </option>
-                     
-                     
-                  <% } %>
-                 
-              
-             
-               
-               
-                <option value="OtherCategory" >Other Category</option>
-                </select>
-                <div id="div1"></div>
-                <select name="region" id="region">
-                  <option selected="selected">Region</option>
-                
-                    <% for (var i = 0; i < locations.length ; i++) { %>
-                     
-                        <option value= <%= locations[i].region%> > <%= locations[i].region %> </option>
-                       
-                       
-                    <% } %>
-                   
-                
-               
-                </select>
-                 
-                 
-  
-
-                  
-
-
-              <div>
-                <label for="victim_age">Victim Age</label>
-                <input type="text" id="victim_age" name="victim_age" required>
-              </div>
-             
-              <div>Victim Gender
-                  <input type="radio" name="victim_gender" value="male"> Male
-              <input type="radio" name="victim_gender" value="female"> Female
-              <input type="radio" name="victim_gender" value="other"> Other
-              
-  
-  
-                </div>
-               
-
- 
-  
-  
-                <button id="button" type="submit">Add Offender Info</button>
-
-
-            
-           
-          
-</form>
-            
-
-</body>
-
-
-</html>
