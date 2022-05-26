@@ -389,7 +389,9 @@ class sql_helper {
           var category_id = offence_results.rows[i].category_id;
           var offence_id = offence_results.rows[i].offence_id;
           Showoffence.user_id = user_id_offence;
-          Showoffence.date_committed = offence_results.rows[i].date_committed;
+          
+          Showoffence.date_committed =JSON.stringify(offence_results.rows[i].date_committed).split('T')[0].split('"')[1];
+         
           Showoffence.offence_id = offence_id;
           client.query(
             `SELECT * FROM tempoffender
@@ -404,7 +406,7 @@ class sql_helper {
               Showoffence.offender_id = results.rows[0].offender_id;
               Showoffence.offender_gender = results.rows[0].offender_gender;
               Showoffence.offender_age = results.rows[0].offender_age;
-              Showoffence.date_added = results.rows[0].date_added;
+              Showoffence.date_added = JSON.stringify(results.rows[0].date_added).split('T')[0].split('"')[1];
               client.query(
                 `SELECT * FROM tempvictim
               WHERE victim_id = $1`,
@@ -638,10 +640,12 @@ console.log(results,Category.category_name);
     );
   };
   static get_users_and_requests = function (email, cb) {
+    console.log("get");
     client.query(
       `SELECT * from users where email=$1 `,
       [email],
       (err, results) => {
+        console.log('err,resuly',err,results);
         if (err) {
           return cb(err);
         }
@@ -677,6 +681,9 @@ console.log(results,Category.category_name);
       }
     );
   }
+
+
+
   static get_profile_from_image_id(image_id, cb) {
     let Showoffence = new showoffence();
     client.query(
@@ -691,7 +698,7 @@ console.log(results,Category.category_name);
         Showoffence.offender_age = results.rows[0].offender_age;
         Showoffence.offender_name = results.rows[0].offender_name;
         Showoffence.offender_gender = results.rows[0].offender_gender;
-        Showoffence.date_added = results.rows[0].date_added;
+        Showoffence.date_added = JSON.stringify(results.rows[0].date_added).split('T')[0].split('"')[1];
         Showoffence.user_id = results.rows[0].user_id;
         client.query(
           `Select * from offence where offender_id=$1`,
@@ -703,9 +710,9 @@ console.log(results,Category.category_name);
             var category_id = results.rows[0].category_id;
             var victim_id = results.rows[0].victim_id;
             var loc_id = results.rows[0].loc_id;
-            var date_committed = results.rows[0].date_committed;
-            Showoffence.date_committed = results.rows[0].date_committed;
-            console.log(typeof date_committed, date_committed);
+            
+            Showoffence.date_committed = JSON.stringify(results.rows[0].date_committed).split('T')[0].split('"')[1];
+            
             Showoffence.offence_id = results.rows[0].offence_id;
             client.query(
               `Select * from victim where victim_id=$1`,
