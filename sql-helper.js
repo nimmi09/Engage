@@ -641,6 +641,7 @@ console.log(results,Category.category_name);
   };
   static get_users_and_requests = function (email, cb) {
     console.log("get");
+    console.log(client);
     client.query(
       `SELECT * from users where email=$1 `,
       [email],
