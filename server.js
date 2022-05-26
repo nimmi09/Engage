@@ -12,6 +12,8 @@ const { PythonShell } = require("python-shell");
 const app = express();
 const fs = require("fs");
 const path = require("path");
+//import { plot } from 'nodeplotlib';
+const { plot } = require("nodeplotlib");
 let pyshell = new PythonShell("face.py", { mode: "json" });
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
@@ -48,6 +50,7 @@ const { location } = require("./location");
 const { offence } = require("./offence");
 const { categories } = require("./category");
 const { type } = require("express/lib/response");
+const { charts } = require("./charts");
 initializePassport(passport);
 client.connect((err) => {
   if (err) {
@@ -63,7 +66,7 @@ app.use(express.static(path.join(__dirname, "/uploads/permanent")));
 app.use(
   session({
     // Key we want to keep secret which will encrypt all of our information
-    secret: process.env.SESSION_SECRET,
+    secret: "secret",
     // Should we resave our session variables if nothing has changes which we dont
     resave: false,
     // Save empty value if there is no vaue which we do not want to do
@@ -80,6 +83,86 @@ app.get("/", (req, res) => {
 });
 app.get("/users/register", checkAuthenticated, (req, res) => {
   return res.render("register.ejs");
+});
+app.get("/chart", checkAuthenticated, (req, res) => {
+  charts.region_wise_offence_count(function (err,x1,y1) {
+    if (err == undefined) {
+
+return res.render("chart.ejs",{x1,y1})
+    }
+  });
+});
+app.get("/chart2", checkAuthenticated, (req, res) => {
+  charts.victim_gender_wise_offence_count(function (err,x2,y2) {
+    if (err == undefined) {
+
+return res.render("chart2.ejs",{x2,y2})
+    }
+  });
+});
+app.get("/chart3", checkAuthenticated, (req, res) => {
+  charts.offender_gender_wise_offence_count(function (err,x3,y3) {
+    if (err == undefined) {
+
+return res.render("chart3.ejs",{x3,y3})
+    }
+  });
+});
+app.get("/chart4", checkAuthenticated, (req, res) => {
+  charts.victim_age_wise_offence_count(function (err,x4,y4) {
+    if (err == undefined) {
+
+return res.render("chart4.ejs",{x4,y})
+    }
+  });
+});
+app.get("/chart5", checkAuthenticated, (req, res) => {
+  charts.offender_age_wise_offence_count(function (err,x,y) {
+    if (err == undefined) {
+
+return res.render("chart5.ejs",{x,y})
+    }
+  });
+});
+app.get("/chart6", checkAuthenticated, (req, res) => {
+  charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
+    if (err == undefined) {
+
+return res.render("chart6.ejs",{x6,y6female,y6male,y6other})
+    }
+  });
+});
+app.get("/chart7", checkAuthenticated, (req, res) => {
+  charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
+    if (err == undefined) {
+
+return res.render("chart7.ejs",{x7,y7female,y7male,y7other})
+    }
+  });
+});
+app.get("/chart8", checkAuthenticated, (req, res) => {
+  charts.offender_age_wise_offence_category(function (err,x,y1,y2,y3) {
+    if (err == undefined) {
+
+return res.render("chart8.ejs",{x,y1,y2,y3})
+    }
+  });
+});
+app.get("/chart9", checkAuthenticated, (req, res) => {
+  charts.victim_age_wise_offence_category(function (err,x,y1,y2,y3) {
+    if (err == undefined) {
+
+return res.render("chart9.ejs",{x,y1,y2,y3})
+    }
+  });
+});
+app.get("/chart-try", checkAuthenticated, (req, res) => {
+  charts.offender_age_wise_offence_category(function (err,x,y1,y2,y3) {
+    if (err == undefined) {
+
+return res.render("chart-try.ejs",{x,y1,y2,y3})
+    }
+  });
 });
 app.get("/users/super", checkNotAuthenticated, (req, res) => {
   return res.render("super.ejs");
@@ -169,8 +252,42 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
   return res.render("login.ejs");
 });
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  console.log(req.user.type);
-  return res.render("dashboard.ejs", { type: req.user.type });
+  charts.region_wise_offence_count(function (err,x1,y1) {
+    if (err == undefined) {
+      charts.victim_gender_wise_offence_count(function (err,x2,y2) {
+        if (err == undefined) {
+          charts.offender_gender_wise_offence_count(function (err,x3,y3) {
+            if (err == undefined) {
+              charts.victim_age_wise_offence_count(function (err,x4,y4) {
+                if (err == undefined) {
+                  charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
+                    if (err == undefined) {
+                      charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
+                        if (err == undefined) {
+                    
+                          return res.render("dashboard.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4,x6,y6female,y6male,y6other,x7,y7female,y7male,y7other });
+                        }
+                      });
+                      
+                    }
+                  });
+            
+                 
+                }
+              });
+        
+             
+            }
+          });
+    
+          
+        }
+      });
+
+
+    }
+  });
+  
 });
 app.get("/add_offence", checkNotAuthenticated, (req, res) => {
   sql_helper.get_offence_categories(function (err, results) {
@@ -318,13 +435,8 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
   sql_helper.get_images(function (err, results) {
     if (err == undefined) {
       var images = results;
-      var rows = JSON.stringify(images);
-      let options = {
-        mode: "text",
-        pythonOptions: ["-u"], // get print results in real-time
-        //scriptPath: 'path/to/my/scripts', //If you are having python_test.py script in same folder, then it's optional.
-        args: [req.file.path, rows], //An argument which can be accessed in the script using sys.argv[1]
-      };
+      
+      
       pyshell.send({
         type: "face_recognition",
         path: req.file.path,
@@ -368,6 +480,11 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
     }
   });
 });
+
+
+
+
+
 app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   date = new Date().toDateString();
   let {
@@ -385,7 +502,9 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   let Location = new location(region);
   let Offence = new offence();
   Offence.date_committed = date_committed;
-  console.log(req.body);
+
+  //console.log(date_committed,Offence.date_committed);
+  //console.log(new Date(date_committed));
   Offence.user_id = req.user.user_id;
   let Image = new image();
   Image.path = req.file.path;
