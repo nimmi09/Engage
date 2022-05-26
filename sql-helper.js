@@ -87,6 +87,26 @@ class sql_helper {
                 }
               }
             );
+            client.query(
+              `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,victim_id,offence_id,category_id)
+                VALUES ($1, $2, $3, $4,$5,$6,$7)`,
+              [
+                user_id_offence,
+                offender_id,
+               
+                loc_id,
+                date_committed,
+                victim_id,
+                
+                id,
+                category_id
+              ],
+              (err, results1) => {
+                if (err) {
+                  console.log(err);
+                }
+              }
+            );
             //accepting image
             client.query(
               `SELECT * FROM tempimages
