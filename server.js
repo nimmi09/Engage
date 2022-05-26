@@ -307,9 +307,7 @@ console.log(category);
     }
   });
 });
-app.get("/users/dashboard", (req, res) => {
-  return res.redirect("/users/dashboard");
-});
+
 app.get("/delete_offence/:offender_id/:offence_id", (req, res) => {
   sql_helper.delete_offence(req.params.offender_id,req.params.offence_id,function (err, results) {
     if (err == undefined) {
