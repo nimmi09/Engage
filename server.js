@@ -555,6 +555,6 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
     }
   });
 });
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log(`Server running on port ${PORT}`);
 });
