@@ -1,0 +1,88 @@
+
+<body>
+  <div> 
+    <canvas id="myChart" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
+   
+  </div> 
+ </body>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/chart.min.js"></script> -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
+ <script>
+   var ele=document.getElementById("myChart");
+  
+ var x= <%- JSON.stringify(x6) %>;
+     var yfemale= <%- JSON.stringify(y6female) %>;
+     var ymale= <%- JSON.stringify(y6male) %>;
+     var yother= <%- JSON.stringify(y6other) %>;
+     console.log(yfemale, ymale, yother, x);
+   var barColors1 = ["red", "green","blue","orange","brown"];
+   var barColors2 = ["orange","blue","green","brown","red"];
+   var barColors3 = ["blue","orange","red","green","brown"];
+   
+   new Chart(ele, {
+   type: "bar",
+   data: {
+     labels: x,
+     datasets: [
+     {
+      label: 'Female',
+      backgroundColor: '#FD8AE6',
+      data: yfemale,
+      
+    },
+    {
+      label: 'Male',
+      backgroundColor: '#2B89F3',
+      data: ymale,
+      
+    },
+    {
+      label: 'Other',
+      backgroundColor: '#A20FE1',
+      data: yother,
+     
+    },
+    ],
+  },
+    options: {
+      title: {
+        display: true,
+        text: 'Victim Gender vs Offence Category',
+    },
+    scales: {
+      xAxes: [{ stacked: true,
+        display: true,
+    scaleLabel: {
+      display: true,
+      labelString: 'Offence Category'
+    }
+   }],
+      yAxes: [{ 
+        stacked: true ,
+        display: true,
+    scaleLabel: {
+      display: true,
+      labelString: 'Number of Victims'
+    },
+    ticks: {
+      
+
+      beginAtZero: true,
+      stepSize: 1 
+    }
+        
+    }],
+    }
+   }
+  
+ });
+ </script>

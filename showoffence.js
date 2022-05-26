@@ -20,6 +20,7 @@ class showoffence {
     this.offender_gender = offender_gender;
     this.region = region;
     this.date_committed = date_committed;
+    console.log('cons',date_committed,this.date_committed);
     this.date_added = date_added;
     this.category_name = category_name;
     this.victim_gender = victim_gender;

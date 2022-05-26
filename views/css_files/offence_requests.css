@@ -43,7 +43,11 @@
   justify-content: center;
   align-items: center;
   padding: 20px 30px;
-  border-radius: 5px;
+  border-radius: 15px;
+}
+.box{
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .box .quote i{
 margin-top: 10px;
@@ -95,7 +99,7 @@ color: #17c0eb
   padding: 9px 9px;
   outline: none;
   border: 2px solid #8e44ad;
-  border-radius: 5px;
+  border-radius: 15px;
   cursor: pointer;
   font-size: 18px;
   font-weight: 400;
