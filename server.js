@@ -344,10 +344,11 @@ console.log('register',req.body);
       password2,
     });
   } else {
+    console.log('just reaching 123456');
     hashedPassword = await bcrypt.hash(password, 10);
     console.log('just reaching');
     sql_helper.get_users_and_requests(email, function (err, results, results1) {
-      
+
       if (err == undefined) {
         var requests = Array.from(results.rows);
         var requests1 = Array.from(results1.rows);
