@@ -1,7 +1,11 @@
 node_modules
 .env*
 env/*
-uploads/*
+uploads/temp/*.jpeg
+uploads/permanent/*.jpeg
+uploads/search/*.jpeg
+
+
 views/fonts/*
 views/vendor/*
 views/images/*
