@@ -48,7 +48,7 @@ class charts {
                     
                      var x=[];
                      var y=[];
-                     console.log('123',results);
+                     //console.log('123',results);
                      for (var i=0;i<results.length;i++){
                        x.push(results[i].offender_gender)
                        y.push(parseInt(results[i].count))
@@ -65,6 +65,7 @@ class charts {
 static victim_gender_vs_offence_categories(cb) {
 
 sql_helper_charts.get_offence_categories(function (err, results) {
+ 
 if (err == undefined) {
 
 var x=[];
@@ -94,7 +95,7 @@ else if(results2[j].victim_gender=='Other'){
 }
 
 }
-if (i==results.length-1){
+if (i==results.length-1||results.length==0){
   return cb(undefined,x,yfemale,ymale,yother);
 }
 
@@ -105,8 +106,11 @@ if (i==results.length-1){
 //console.log(x,yfemale,ymale,yother);
 });
 }
-
+if (i==results.length-1||results.length==0){
+  return cb(undefined,x,yfemale,ymale,yother);
 }
+}
+
 });
 }
 
@@ -143,7 +147,7 @@ static offender_gender_vs_offence_categories(cb) {
   }
   
   }
-  if (i==results.length-1){
+  if (i==results.length-1||results.length==0){
     return cb(undefined,x,yfemale,ymale,yother);
   }
   
@@ -154,6 +158,10 @@ static offender_gender_vs_offence_categories(cb) {
   //console.log(x,yfemale,ymale,yother);
   });
   }
+  if (i==results.length-1||results.length==0){
+    return cb(undefined,x,yfemale,ymale,yother);
+  }
+  
   
   }
   });

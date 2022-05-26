@@ -63,6 +63,7 @@ static victim_gender_vs_offence_categories(category_name,i,cb){
     (err, results) => {
       if (err) {
         console.log(err);
+        return cb(err);
       }
       console.log('sql',category_name,i);
       

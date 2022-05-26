@@ -230,6 +230,7 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
   ) {
     //var requests=sql_helper.offender_requests();
     sql_helper.get_offence_requests(function (err, offences) {
+      console.log(err,'err')
       if (err == undefined) {
         //console.log(offences);
         if (offences.length == 0) {
@@ -252,21 +253,31 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
   return res.render("login.ejs");
 });
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
+  console.log('hksdkhkshkdhskdh');
   charts.region_wise_offence_count(function (err,x1,y1) {
+    console.log('1',err)
     if (err == undefined) {
+      console.log('2',err)
       charts.victim_gender_wise_offence_count(function (err,x2,y2) {
+        console.log('3',err)
         if (err == undefined) {
+         
           charts.offender_gender_wise_offence_count(function (err,x3,y3) {
+            console.log('4',err)
             if (err == undefined) {
               charts.victim_age_wise_offence_count(function (err,x4,y4) {
+                console.log('5',err)
                 if (err == undefined) {
                   charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
+                    console.log('6',err)
                     if (err == undefined) {
                       charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
+                        console.log('7',err)
                         if (err == undefined) {
                     
                           return res.render("dashboard.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4,x6,y6female,y6male,y6other,x7,y7female,y7male,y7other });
                         }
+                       
                       });
                       
                     }
@@ -383,6 +394,7 @@ app.post(
     return res.redirect("/users/dashboard");
   }
 );
+
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return res.redirect("/users/dashboard");

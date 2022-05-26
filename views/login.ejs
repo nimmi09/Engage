@@ -50,6 +50,16 @@
        
     </div>
       <% } %>  
+      <% if (messages.error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong> <%= messages.error%></strong>
+        
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+           
+         
+         
+      </div>
+        <% } %>  
 	
 	<div class="limiter">
 		<div class="container-login100">

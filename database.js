@@ -5,6 +5,6 @@ const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_P
 console.log(connectionString);
 const client = new Client({
   connectionString : connectionString,
-  ssl: { rejectUnauthorized: false },
+  ssl:false,
 });
 module.exports = { client };

@@ -4,17 +4,16 @@ import cv2
 import numpy as np
 import face_recognition
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
 def func(q):
     return json.dumps({'value': q})
-def plot_graph():
-    return
+
+   
+    
 def face_recog(abc):
     rows=abc['rows']
-    #print(inp)
-    #print(func(abc))
-    # print(func(rows))
     
-    #print(func(av))
     if (len(rows) ==0):
         ans = {'type': "face_recognition" ,'image_id': -1 }
         json_data = json.dumps(ans)
@@ -25,7 +24,7 @@ def face_recog(abc):
         image_id=[]
         
         for row in rows:
-            #print(func(row['path']))
+            
             curImg = cv2.imread(row['path'])
             images.append(curImg)
             image_id.append(row['image_id'])
@@ -58,5 +57,6 @@ while True:
     abc=json.loads(inp)
     if(abc['type']=="face_recognition"):
         face_recog(abc)
+    
     
     

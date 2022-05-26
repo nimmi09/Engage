@@ -4,6 +4,7 @@ const { client } = require("./database");
 const bcrypt = require("bcrypt");
 function initialize(passport) {
   const authenticateUser = (email, password, done) => {
+    console.log(email, password, done);
     client.query(
       `SELECT * FROM users WHERE email = $1`,
       [email],
@@ -26,6 +27,7 @@ function initialize(passport) {
           });
         } else {
           // No user
+          
           return done(null, false, {
             message: "No user with that email address",
           });

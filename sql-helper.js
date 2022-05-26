@@ -375,8 +375,10 @@ class sql_helper {
       (err, offence_results) => {
         if (err) {
           console.log(err);
+          return cb(err);
         }
         let offences = [];
+        console.log(offence_results.rows.length,'8989')
         if (offence_results.rows.length == 0) {
           return cb(undefined, offences);
         }
@@ -400,6 +402,10 @@ class sql_helper {
             (err, results) => {
               if (err) {
                 console.log(err);
+                return cb(err);
+              }
+              if(results.rows.length==0){
+                  return cb(undefined)
               }
               var image_id = results.rows[0].image_id;
               Showoffence.offender_name = results.rows[0].offender_name;
