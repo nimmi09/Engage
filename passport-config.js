@@ -19,6 +19,7 @@ function initialize(passport) {
               console.log(err);
             }
             if (isMatch) {
+              console.log('match')
               return done(null, user);
             } else {
               //password is incorrect

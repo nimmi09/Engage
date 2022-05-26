@@ -391,6 +391,7 @@ app.post(
     failureFlash: true,
   }),
   (req, res) => {
+    console.log('hhjhj')
     return res.redirect("/users/dashboard");
   }
 );
