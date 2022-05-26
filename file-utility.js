@@ -4,7 +4,7 @@ class file_utility {
     let pathparts = image_path.split("\\");
     let filename = pathparts[pathparts.length - 1];
     const destinationPath =
-      "./uploads/permanent" +
+      "/./uploads/permanent" +
       "/" +
       filename;
       console.log(destinationPath)
