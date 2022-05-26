@@ -164,7 +164,7 @@ return res.render("chart-try.ejs",{x,y1,y2,y3})
     }
   });
 });
-app.get("/users/super", checkNotAuthenticated, (req, res) => {
+app.get("/users/super", checkAuthenticated, (req, res) => {
   return res.render("super.ejs");
 });
 app.get("/search", checkNotAuthenticated, (req, res) => {
