@@ -446,11 +446,12 @@ app.post("/users/super", async (req, res) => {
   }
 });
 app.post("/search", searchupload.single("photo"), (req, res) => {
-  var start = Date.now();
+  console.log("before get image")
   sql_helper.get_images(function (err, results) {
+    console.log("after")
     if (err == undefined) {
       var images = results;
-      
+      console.log("undefined",images);
       
       pyshell.send({
         type: "face_recognition",
@@ -459,6 +460,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       });
       pyshell.once("message", function (message) {
         // received a message sent from the Python script (a simple "print" statement)
+        console.log("message")
         if (message["type"] == "face_recognition") {
           var image_id = message["image_id"];
           if (image_id == -1) {
