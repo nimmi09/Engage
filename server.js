@@ -15,6 +15,7 @@ const path = require("path");
 //import { plot } from 'nodeplotlib';
 const { plot } = require("nodeplotlib");
 let pyshell = new PythonShell("face.py", { mode: "json" });
+console.log('pyshell',pyshell)
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
