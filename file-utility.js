@@ -23,8 +23,9 @@ class file_utility {
     return destinationPath;
   }
   static deletefile(images) {
-    for (let i = 0; i < images; i++) {
-      image_path = images[i].path;
+    
+    for (let i = 0; i < images.length; i++) {
+      var image_path = images[i].path;
       fs.unlinkSync(image_path, (err) => {
         if (err) console.log(err);
       });
