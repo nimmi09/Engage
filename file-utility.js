@@ -3,8 +3,9 @@ class file_utility {
   static movefile(image_path) {
     let pathparts = image_path.split("\\");
     let filename = pathparts[pathparts.length - 1];
+    console.log(filename);
     const destinationPath =
-      "/./uploads/permanent" +
+      "./uploads/permanent" +
       "/" +
       filename;
       console.log(destinationPath)
