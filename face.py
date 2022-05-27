@@ -55,6 +55,7 @@ def face_recog(abc):
 while True:
     inp = input(" ")
     abc=json.loads(inp)
+    print(func(abc))
     if(abc['type']=="face_recognition"):
         face_recog(abc)
     
