@@ -15,7 +15,16 @@ const path = require("path");
 //import { plot } from 'nodeplotlib';
 const { plot } = require("nodeplotlib");
 //let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH,scriptPath: __dirname});
-let pyshell = new PythonShell("face1.py", { mode: "json"});
+let pyshell = new PythonShell("face.py", { mode: "json"});
+pyshell.on("error", function (error) {
+  console.log(error);
+});
+pyshell.on("stderr", function (stderr) {
+  console.log(stderr);
+});
+pyshell.on("pythonError", function (pythonError) {
+  console.log(pythonError);
+});
 console.log('pyshell',pyshell)
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
@@ -506,15 +515,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
         }
       });
       
-      pyshell.once("error", function (error) {
-        console.log(error);
-      });
-      pyshell.once("stderr", function (stderr) {
-        console.log(stderr);
-      });
-      pyshell.once("pythonError", function (pythonError) {
-        console.log(pythonError);
-      });
+     
     
     }
   });

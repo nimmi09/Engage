@@ -4,8 +4,7 @@ import cv2
 import numpy as np
 import face_recognition
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
+
 def func(q):
     return json.dumps({'value': q})
 
@@ -55,7 +54,7 @@ def face_recog(abc):
 while True:
     inp = input(" ")
     abc=json.loads(inp)
-    print(func("abc"))
+    
     if(abc['type']=="face_recognition"):
         face_recog(abc)
     

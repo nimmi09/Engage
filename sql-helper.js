@@ -453,7 +453,11 @@ class sql_helper {
                   if (err) {
                     console.log(err);
                   }
-                  Showoffence.image_path = results.rows[0].path;
+                 var image_path = results.rows[0].path;
+                var image_path_split = image_path.split("/");
+                var file_name = image_path_split[image_path_split.length - 1];
+                Showoffence.image_path = file_name;
+                console.log(Showoffence.image_path,'mmnmnm')
                 }
               );
               client.query(
@@ -465,6 +469,7 @@ class sql_helper {
                     console.log(err);
                   }
                   if (results.rows.length > 0) {
+                    console.log("temp",results.rows)
                     Showoffence.category_name = results.rows[0].category_name;
                   } else {
                     client.query(
@@ -475,28 +480,30 @@ class sql_helper {
                         if (err) {
                           console.log(err);
                         }
-                        Showoffence.category_name =
-                          results.rows[0].category_name;
+                       
+                        Showoffence.category_name =results.rows[0].category_name;
+                        
+                        client.query(
+                          `SELECT * FROM location
+                          WHERE loc_id = $1`,
+                          [loc_id],
+                          (err, results) => {
+                            if (err) {
+                              console.log(err);
+                            }
+                            Showoffence.region = results.rows[0].region;
+                            offences.push(Showoffence);
+                            if (i == offence_results.rows.length - 1) {
+                              return cb(undefined, offences);
+                            }
+                          }
+                        );
                       }
                     );
                   }
                 }
               );
-              client.query(
-                `SELECT * FROM location
-                WHERE loc_id = $1`,
-                [loc_id],
-                (err, results) => {
-                  if (err) {
-                    console.log(err);
-                  }
-                  Showoffence.region = results.rows[0].region;
-                  offences.push(Showoffence);
-                  if (i == offence_results.rows.length - 1) {
-                    return cb(undefined, offences);
-                  }
-                }
-              );
+             
             }
           );
         }
