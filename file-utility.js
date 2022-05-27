@@ -5,7 +5,7 @@ class file_utility {
   static movefile(image_path) {
     console.log(image_path, 'before replace')
     var new_image_path = image_path.replace(/\\/g,'/')
-    console.log(abc,'2 replace')
+    console.log(new_image_path,'2 replace')
     let pathparts = new_image_path.split("/");
     console.log(pathparts,'23');
     let filename = pathparts[pathparts.length - 1];
