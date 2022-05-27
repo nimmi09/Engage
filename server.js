@@ -14,7 +14,8 @@ const fs = require("fs");
 const path = require("path");
 //import { plot } from 'nodeplotlib';
 const { plot } = require("nodeplotlib");
-let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH,scriptPath: __dirname});
+//let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH,scriptPath: __dirname});
+let pyshell = new PythonShell("face1.py", { mode: "json"});
 console.log('pyshell',pyshell)
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
@@ -64,6 +65,7 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(express.static("views"));
 app.use(express.static(path.join(__dirname, "/uploads/permanent")));
+app.use(express.static(path.join(__dirname, "/uploads/temp")));
 app.use(
   session({
     // Key we want to keep secret which will encrypt all of our information
@@ -238,6 +240,7 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
           req.flash("error_msg", "No Requests to show.");
           return res.redirect("/users/dashboard");
         } else {
+          console.log("offences",offences)
           return res.render("offence_requests.ejs", {
             offences,
             type: req.user.type,
@@ -256,24 +259,24 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   console.log('hksdkhkshkdhskdh');
   charts.region_wise_offence_count(function (err,x1,y1) {
-    console.log('1',err)
+    
     if (err == undefined) {
-      console.log('2',err)
+     
       charts.victim_gender_wise_offence_count(function (err,x2,y2) {
-        console.log('3',err)
+      
         if (err == undefined) {
          
           charts.offender_gender_wise_offence_count(function (err,x3,y3) {
-            console.log('4',err)
+           
             if (err == undefined) {
               charts.victim_age_wise_offence_count(function (err,x4,y4) {
-                console.log('5',err)
+               
                 if (err == undefined) {
                   charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
-                    console.log('6',err)
+                    
                     if (err == undefined) {
                       charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
-                        console.log('7',err)
+                       
                         if (err == undefined) {
                     
                           return res.render("dashboard.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4,x6,y6female,y6male,y6other,x7,y7female,y7male,y7other });
@@ -453,13 +456,30 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       var images = results;
       console.log("undefined",images);
       
-      pyshell.send({
+      pyshell.send(
+        {
+       
         type: "face_recognition",
         path: req.file.path,
         rows: images
       });
+    //   let options = {
+    //     mode: 'text',
+    //     pythonOptions: ['-u'], // get print results in real-time
+    //       scriptPath:__dirname, //If you are having python_test.py script in same folder, then it's optional.
+    //     args: [req.file.path,images] 
+    // };
+     
+ 
+    // PythonShell.run('face1.py', options, function (err, result){
+    //       if (err) throw err;
+    //       // result is an array consisting of messages collected
+    //       //during execution of script.
+    //       console.log('result: ', result.toString());
+    //       res.send(result.toString())
+    // });
       pyshell.once("message", function (message) {
-        // received a message sent from the Python script (a simple "print" statement)
+        
         console.log("message")
         if (message["type"] == "face_recognition") {
           var image_id = message["image_id"];
@@ -474,6 +494,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
               image_id,
               function (err, results) {
                 if (err == undefined) {
+                  console.log(results);
                   return res.render("offender_profile.ejs", {
                     type: req.user.type,
                     profile: results,
@@ -484,6 +505,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
           }
         }
       });
+      
       pyshell.once("error", function (error) {
         console.log(error);
       });
@@ -524,7 +546,10 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   //console.log(new Date(date_committed));
   Offence.user_id = req.user.user_id;
   let Image = new image();
-  Image.path = req.file.path;
+  //Image.path = req.file.path;
+  var new_image_path =  req.file.path.replace(/\\/g,'/')
+  Image.path=new_image_path
+  console.log(new_image_path,Image.path)
   let Victim = new victim();
   Victim.age = victim_age;
   Victim.gender = victim_gender;
