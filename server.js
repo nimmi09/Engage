@@ -14,7 +14,7 @@ const fs = require("fs");
 const path = require("path");
 //import { plot } from 'nodeplotlib';
 const { plot } = require("nodeplotlib");
-let pyshell = new PythonShell("face.py", { mode: "json" });
+let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH });
 console.log('pyshell',pyshell)
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
@@ -456,7 +456,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       pyshell.send({
         type: "face_recognition",
         path: req.file.path,
-        rows: images,
+        rows: images
       });
       pyshell.once("message", function (message) {
         // received a message sent from the Python script (a simple "print" statement)
