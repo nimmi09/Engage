@@ -10,8 +10,7 @@ class file_utility {
     console.log(pathparts,'23');
     let filename = pathparts[pathparts.length - 1];
     console.log(filename,'45');
-    const destinationPath =
-      "./uploads/permanent" +
+    const destinationPath = __dirname+      "/uploads/permanent" +
       "/" +
       filename;
       console.log(destinationPath,'56')
