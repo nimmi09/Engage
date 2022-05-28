@@ -65,6 +65,45 @@ let storage1 = multer.diskStorage({
   },
 });
 const searchupload = multer({ storage: storage1 });
+
+
+
+// const resolveBlobName = (req, file) => {
+//   return new Promise((resolve, reject) => {
+//       const blobName = yourCustomLogic(req, file);
+//       resolve(blobName);
+//   });
+// };
+
+// const resolveMetadata = (req, file) => {
+//   return new Promise((resolve, reject) => {
+//       const metadata = yourCustomLogic(req, file);
+//       resolve(metadata);
+//   });
+// };
+
+// const resolveContentSettings = (req, file) => {
+//   return new Promise((resolve, reject)=> {
+//       const contentSettings = yourCustomLogic(req, file);
+//       resolve(contentSettings);
+//   });
+// };
+
+const azureStorage = new MulterAzureStorage({
+  connectionString: process.env.CONNECTION_STRING,
+  accessKey: process.env.ACCESS_KEY,
+  accountName: 'offace',
+  containerName: 'uploads',
+  //blobName: resolveBlobName,
+  //metadata: resolveMetadata,
+  //contentSettings: resolveContentSettings,
+  containerAccessLevel: 'container',
+  urlExpirationTime: 9999
+});
+
+const azureupload = multer({
+  storage: azureStorage
+});
 //initializing Passport Authentication Middleware
 initializePassport(passport);
 client.connect((err) => {
@@ -498,7 +537,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
 
 
 //adds information about an offence in database
-app.post("/add_offence", upload.single("photo"), (req, res, next) => {
+app.post("/add_offence", azureupload.single("photo"), (req, res, next) => {
   date = new Date().toDateString();
   let {
     name,
