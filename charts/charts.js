@@ -1,4 +1,4 @@
-const { sql_helper_charts } = require("./sql-helper-charts");
+const { sql_helper_charts } = require("../sql-helpers/sql-helper-charts");
 
 class charts {
   static region_wise_offence_count(cb) {

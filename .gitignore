@@ -5,7 +5,7 @@ uploads/temp/*.jpeg
 uploads/permanent/*.jpeg
 uploads/search/*.jpeg
 
-
+seq/*
 views/fonts/*
 views/vendor/*
 views/images/*

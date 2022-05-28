@@ -1,6 +1,6 @@
-const { file_utility } = require("./file-utility");
-const { client } = require("./database");
-const { showoffence } = require("./showoffence");
+const { file_utility } = require("../Utilities/file-utility");
+const { client } = require("../database-config/database");
+const { showoffence } = require("../components/showoffence");
 class sql_helper {
   static accept_user(id) {
     console.log("123", id);

@@ -6,8 +6,9 @@ body::before {
 section{
   height:500px;
 }
-.logo{
+img{
 height:320px;
+width: 350px;
 }
 
 
@@ -37,8 +38,9 @@ height:320px;
 	box-sizing: border-box;
 	width: 100%;
 	text-align: left;
-	font: bold 16px sans-serif;
-	padding: 55px 50px;
+	/* font: bold 16px sans-serif; */
+	padding: 20px 50px;
+
 }
 
 .footer-distributed .footer-left,
@@ -56,7 +58,16 @@ height:320px;
 
 /* The company logo */
 
-.footer-distributed h3{
+.footer-distributed h2{
+	color:  #ffffff;
+	font: normal 36px 'Open Sans', cursive;
+	margin: 0;
+}
+
+.nav-bar h3 span{
+	color:  lightseagreen;
+}
+.nav-bar h3{
 	color:  #ffffff;
 	font: normal 36px 'Open Sans', cursive;
 	margin: 0;
@@ -151,20 +162,22 @@ height:320px;
 
 .footer-distributed .footer-right{
 	width: 20%;
+  color:white;
 }
 
 .footer-distributed .footer-company-about{
 	line-height: 20px;
-	color:  #92999f;
+	color: white;
 	font-size: 13px;
 	font-weight: normal;
+  /* font: 14px sans-serif; */
 	margin: 0;
 }
 
 .footer-distributed .footer-company-about span{
 	display: block;
 	color:  #ffffff;
-	font-size: 14px;
+	font-size: 16px;
 	font-weight: bold;
 	margin-bottom: 20px;
 }

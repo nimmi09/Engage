@@ -1,4 +1,4 @@
-const { client } = require("./database");
+const { client } = require("../database-config/database");
 
 class sql_helper_charts {
   static region_wise_offence_count (cb) {

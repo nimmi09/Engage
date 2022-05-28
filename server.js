@@ -1,6 +1,6 @@
 const express = require("express");
-//const { client } = require("./dbConfig");
-const { client } = require("./database");
+
+const { client } = require("./database-config/database");
 const multer = require("multer");
 //const upload = multer({dest: __dirname + '/uploads'});
 const bcrypt = require("bcrypt");
@@ -12,10 +12,21 @@ const { PythonShell } = require("python-shell");
 const app = express();
 const fs = require("fs");
 const path = require("path");
-//import { plot } from 'nodeplotlib';
-
-//let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH,scriptPath: __dirname});
 let pyshell = new PythonShell("face.py", { mode: "json"});
+
+const initializePassport = require("./passport-config");
+const req = require("express/lib/request");
+const { range } = require("express/lib/request");
+const { sql_helper } = require("./sql-helpers/sql-helper");
+const { image } = require("./components/image");
+const { user } = require("./components/user");
+const { offender } = require("./components/offender");
+const { victim } = require("./components/victim");
+const { location } = require("./components/location");
+const { offence } = require("./components/offence");
+const { categories } = require("./components/category");
+const { type } = require("express/lib/response");
+const { charts } = require("./charts/charts");
 pyshell.on("error", function (error) {
   console.log(error);
 });
@@ -27,6 +38,7 @@ pyshell.on("pythonError", function (pythonError) {
 });
 
 const PORT = process.env.PORT || 3000;
+//setting path for uploaded temporary files
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, __dirname + "/uploads/temp");
@@ -38,6 +50,7 @@ let storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+//setting path for temporary files uploaded to search
 let storage1 = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, __dirname + "/uploads/search");
@@ -49,19 +62,7 @@ let storage1 = multer.diskStorage({
   },
 });
 const searchupload = multer({ storage: storage1 });
-const initializePassport = require("./passport-config");
-const req = require("express/lib/request");
-const { range } = require("express/lib/request");
-const { sql_helper } = require("./sql-helper");
-const { image } = require("./image");
-const { user } = require("./user");
-const { offender } = require("./offender");
-const { victim } = require("./victim");
-const { location } = require("./location");
-const { offence } = require("./offence");
-const { categories } = require("./category");
-const { type } = require("express/lib/response");
-const { charts } = require("./charts");
+//initializing Passport Authentication Middleware
 initializePassport(passport);
 client.connect((err) => {
   if (err) {
@@ -72,6 +73,7 @@ client.connect((err) => {
 });
 app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
+//setting paths to serve static files
 app.use(express.static("views"));
 app.use(express.static(path.join(__dirname, "/uploads/permanent")));
 app.use(express.static(path.join(__dirname, "/uploads/temp")));
@@ -96,7 +98,7 @@ app.get("/", (req, res) => {
 app.get("/users/register", checkAuthenticated, (req, res) => {
   return res.render("register.ejs");
 });
-
+//showstats path and all the calculations required
 app.get("/show_stats", checkNotAuthenticated, (req, res) => {
   charts.region_wise_offence_count(function (err,x1,y1) {
     
@@ -168,6 +170,7 @@ app.get("/users/super", checkAuthenticated, (req, res) => {
 app.get("/search", checkNotAuthenticated, (req, res) => {
   return res.render("search.ejs", { type: req.user.type });
 });
+//accept requests
 app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
   if (
     req.params.type == "user" ||
@@ -185,6 +188,7 @@ app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
     return res.redirect("/offence_requests");
   }
 });
+//reject requests
 app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
   if (
     req.params.type == "user" ||
@@ -202,6 +206,7 @@ app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
     return res.redirect("/offence_requests");
   }
 });
+//show user requests
 app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
   if (
     (req.params.type == "user" && req.user.type == "admin") ||
@@ -220,22 +225,22 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
     });
   }
 });
+//show offence requests
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
   if (
     req.user.type == "user" ||
     req.user.type == "admin" ||
     req.user.type == "super"
   ) {
-    //var requests=sql_helper.offender_requests();
+    
     sql_helper.get_offence_requests(function (err, offences) {
-      console.log(err,'err')
+      
       if (err == undefined) {
-        //console.log(offences);
+       
         if (offences.length == 0) {
           req.flash("error_msg", "No Requests to show.");
           return res.redirect("/users/dashboard");
         } else {
-          console.log("offences",offences)
           return res.render("offence_requests.ejs", {
             offences,
             type: req.user.type,
@@ -251,6 +256,7 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
 app.get("/users/login", checkAuthenticated, (req, res) => {
   return res.render("login.ejs");
 });
+//rendering dashboard and all required computations
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
  
   charts.region_wise_offence_count(function (err,x1,y1) {
@@ -286,6 +292,7 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
   });
   
 });
+//rendering report offence page
 app.get("/add_offence", checkNotAuthenticated, (req, res) => {
   sql_helper.get_offence_categories(function (err, results) {
     if (err == undefined) {
@@ -304,7 +311,7 @@ console.log(category);
     }
   });
 });
-
+//deleting offence
 app.get("/delete_offence/:offender_id/:offence_id", (req, res) => {
   sql_helper.delete_offence(req.params.offender_id,req.params.offence_id,function (err, results) {
     if (err == undefined) {
@@ -321,6 +328,8 @@ app.get("/users/logout", (req, res) => {
   req.flash("success_msg", "You have logged out successfully");
   return res.render("index.ejs");
 });
+
+//taking user information and passing to sql-helper to save it in  database
 app.post("/users/register", async (req, res) => {
   let { type, name, email, desg, password, password2 } = req.body;
 console.log('register',req.body);
@@ -370,6 +379,7 @@ console.log('register',req.body);
     });
   }
 });
+//uses passport to validates and log in the user
 app.post(
   "/users/login",
   passport.authenticate("local", {
@@ -430,6 +440,7 @@ app.post("/users/super", async (req, res) => {
     );
   }
 });
+//searches an offender in database and returns result
 app.post("/search", searchupload.single("photo"), (req, res) => {
   console.log("before get image")
   sql_helper.get_images(function (err, results) {
@@ -445,21 +456,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
         path: req.file.path,
         rows: images
       });
-    //   let options = {
-    //     mode: 'text',
-    //     pythonOptions: ['-u'], // get print results in real-time
-    //       scriptPath:__dirname, //If you are having python_test.py script in same folder, then it's optional.
-    //     args: [req.file.path,images] 
-    // };
-     
- 
-    // PythonShell.run('face1.py', options, function (err, result){
-    //       if (err) throw err;
-    //       // result is an array consisting of messages collected
-    //       //during execution of script.
-    //       console.log('result: ', result.toString());
-    //       res.send(result.toString())
-    // });
+   
       pyshell.once("message", function (message) {
         
         console.log("message")
@@ -497,7 +494,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
 
 
 
-
+//adds information about an offence in database
 app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   date = new Date().toDateString();
   let {
@@ -516,11 +513,9 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   let Offence = new offence();
   Offence.date_committed = date_committed;
 
-  //console.log(date_committed,Offence.date_committed);
-  //console.log(new Date(date_committed));
   Offence.user_id = req.user.user_id;
   let Image = new image();
-  //Image.path = req.file.path;
+  //replaces backward slashes with forward slash to make the path suitable for all platforms
   var new_image_path =  req.file.path.replace(/\\/g,'/')
   Image.path=new_image_path
   console.log(new_image_path,Image.path)
