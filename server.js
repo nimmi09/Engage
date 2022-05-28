@@ -13,7 +13,7 @@ const app = express();
 const fs = require("fs");
 const path = require("path");
 //import { plot } from 'nodeplotlib';
-const { plot } = require("nodeplotlib");
+
 //let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH,scriptPath: __dirname});
 let pyshell = new PythonShell("face.py", { mode: "json"});
 pyshell.on("error", function (error) {
@@ -25,7 +25,7 @@ pyshell.on("stderr", function (stderr) {
 pyshell.on("pythonError", function (pythonError) {
   console.log(pythonError);
 });
-console.log('pyshell',pyshell)
+
 const PORT = process.env.PORT || 3000;
 let storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -96,85 +96,71 @@ app.get("/", (req, res) => {
 app.get("/users/register", checkAuthenticated, (req, res) => {
   return res.render("register.ejs");
 });
-app.get("/chart", checkAuthenticated, (req, res) => {
+
+app.get("/show_stats", checkNotAuthenticated, (req, res) => {
   charts.region_wise_offence_count(function (err,x1,y1) {
+    
     if (err == undefined) {
+     
+      charts.victim_gender_wise_offence_count(function (err,x2,y2) {
+      
+        if (err == undefined) {
+         
+          charts.offender_gender_wise_offence_count(function (err,x3,y3) {
+           
+            if (err == undefined) {
+              charts.victim_age_wise_offence_count(function (err,x4,y4) {
+               
+                if (err == undefined) {
+                  charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
+                    
+                    if (err == undefined) {
+                      charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
+                       
+                        if (err == undefined) {
+                          charts.offender_age_wise_offence_category(function (err,x8,y18,y28,y38) {
+                            if (err == undefined) {
+                              charts.victim_age_wise_offence_category(function (err,x9,y19,y29,y39) {
+                                if (err == undefined) {
+                                  charts.offender_age_wise_offence_count(function (err,x5,y5) {
+                                    if (err == undefined) {
+                                
+                                      return res.render("show_stats.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4,x6,y6female,y6male,y6other,x7,y7female,y7male,y7other,x8,y18,y28,y38,x9,y19,y29,y39,x5,y5});
+                                    }
+                                  });
 
-return res.render("chart.ejs",{x1,y1})
+                                }
+                              });
+                            }
+                          });
+                         
+                          
+                        }
+                       
+                      });
+                      
+                    }
+                  });
+            
+                 
+                }
+              });
+        
+             
+            }
+          });
+    
+          
+        }
+      });
+
+
     }
   });
-});
-app.get("/chart2", checkAuthenticated, (req, res) => {
-  charts.victim_gender_wise_offence_count(function (err,x2,y2) {
-    if (err == undefined) {
 
-return res.render("chart2.ejs",{x2,y2})
-    }
-  });
-});
-app.get("/chart3", checkAuthenticated, (req, res) => {
-  charts.offender_gender_wise_offence_count(function (err,x3,y3) {
-    if (err == undefined) {
 
-return res.render("chart3.ejs",{x3,y3})
-    }
-  });
-});
-app.get("/chart4", checkAuthenticated, (req, res) => {
-  charts.victim_age_wise_offence_count(function (err,x4,y4) {
-    if (err == undefined) {
+    
 
-return res.render("chart4.ejs",{x4,y})
-    }
-  });
-});
-app.get("/chart5", checkAuthenticated, (req, res) => {
-  charts.offender_age_wise_offence_count(function (err,x,y) {
-    if (err == undefined) {
-
-return res.render("chart5.ejs",{x,y})
-    }
-  });
-});
-app.get("/chart6", checkAuthenticated, (req, res) => {
-  charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
-    if (err == undefined) {
-
-return res.render("chart6.ejs",{x6,y6female,y6male,y6other})
-    }
-  });
-});
-app.get("/chart7", checkAuthenticated, (req, res) => {
-  charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
-    if (err == undefined) {
-
-return res.render("chart7.ejs",{x7,y7female,y7male,y7other})
-    }
-  });
-});
-app.get("/chart8", checkAuthenticated, (req, res) => {
-  charts.offender_age_wise_offence_category(function (err,x,y1,y2,y3) {
-    if (err == undefined) {
-
-return res.render("chart8.ejs",{x,y1,y2,y3})
-    }
-  });
-});
-app.get("/chart9", checkAuthenticated, (req, res) => {
-  charts.victim_age_wise_offence_category(function (err,x,y1,y2,y3) {
-    if (err == undefined) {
-
-return res.render("chart9.ejs",{x,y1,y2,y3})
-    }
-  });
-});
-app.get("/chart-try", checkAuthenticated, (req, res) => {
-  charts.offender_age_wise_offence_category(function (err,x,y1,y2,y3) {
-    if (err == undefined) {
-
-return res.render("chart-try.ejs",{x,y1,y2,y3})
-    }
-  });
 });
 app.get("/users/super", checkAuthenticated, (req, res) => {
   return res.render("super.ejs");
@@ -266,7 +252,7 @@ app.get("/users/login", checkAuthenticated, (req, res) => {
   return res.render("login.ejs");
 });
 app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
-  console.log('hksdkhkshkdhskdh');
+ 
   charts.region_wise_offence_count(function (err,x1,y1) {
     
     if (err == undefined) {
@@ -281,20 +267,7 @@ app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
               charts.victim_age_wise_offence_count(function (err,x4,y4) {
                
                 if (err == undefined) {
-                  charts.victim_gender_vs_offence_categories(function (err,x6,y6female,y6male,y6other) {
-                    
-                    if (err == undefined) {
-                      charts.offender_gender_vs_offence_categories(function (err,x7,y7female,y7male,y7other) {
-                       
-                        if (err == undefined) {
-                    
-                          return res.render("dashboard.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4,x6,y6female,y6male,y6other,x7,y7female,y7male,y7other });
-                        }
-                       
-                      });
-                      
-                    }
-                  });
+                  return res.render("dashboard.ejs", { type: req.user.type,x1,y1,x2,y2,x3,y3,x4,y4 });
             
                  
                 }
@@ -468,7 +441,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       pyshell.send(
         {
        
-        type: "face_recognition",
+        type: "face_recog",
         path: req.file.path,
         rows: images
       });
@@ -490,7 +463,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
       pyshell.once("message", function (message) {
         
         console.log("message")
-        if (message["type"] == "face_recognition") {
+        if (message["type"] == "face_recog") {
           var image_id = message["image_id"];
           if (image_id == -1) {
             req.flash(
