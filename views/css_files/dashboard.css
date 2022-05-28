@@ -253,7 +253,7 @@ iframe {
 }
 /*------------------------------------------------------------------
 [ Button ]*/
-.container-login100-form-btn {
+.btns {
   width: 100%;
   display: -webkit-box;
   display: -webkit-flex;
@@ -263,7 +263,26 @@ iframe {
   flex-wrap: wrap;
   justify-content: center;
   padding-top: 20px;
+  text-align: center;
 }
+.btns a{
+  position:relative;
+  
+ 
+  padding: 9px 9px;
+  outline: none;
+  border: 2px solid #8e44ad;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 400;
+  color:black;
+  transition: all 0.3s linear;
+  text-decoration: none;
+  
+  
+}
+
 .login100-form-btn {
   font-family: Montserrat-Bold;
   font-size: 15px;
@@ -377,6 +396,56 @@ iframe {
     opacity: 1;
   }
 }
-.chart1{
+
+.chart{
+ 
+  position: relative;
+  
+  
+  width: 530px;
+  height: 350px;
+  
+  border-radius: 16px;
+  border-color: black;
   background-color: #ffffff;
+  margin-bottom: 5px;
+  margin-right: 20px;
+  margin-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#myChart1{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart2{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart3{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart4{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+
+.btns a:first-child{
+  background: lightgreen;
+  color: black;
+  margin-right: 5px;
+ 
+}
+
+.btns a:first-child:hover{
+  background: #8e44ad;
+  color:white;
+}
+.btns a:hover{
+  color: #fff;
 }

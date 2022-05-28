@@ -46,7 +46,12 @@ a {
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
 }
-
+.card-body1{
+  height:483px;
+}
+.image{
+  padding-top: 50px;
+}
 a:focus {
   outline: none !important;
 }

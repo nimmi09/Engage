@@ -132,7 +132,7 @@ iframe {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
- 
+  padding: 15px;
   background: #9053c7;
   background: -webkit-linear-gradient(-135deg,#ffffff, #c850c0, #4158d0,#ffffff);
   background: -o-linear-gradient(-135deg, #ffffff,#c850c0, #4158d0,#ffffff);
@@ -140,7 +140,7 @@ iframe {
   background: linear-gradient(-135deg,  #ffffff,#c850c0, #4158d0,#ffffff);
 }
 .wrap-login100 {
-  width: 800px;
+  width: 960px;
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
@@ -151,11 +151,7 @@ iframe {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 50px 100px 80px 100px;
-  margin: 25px 0px 25px 0px;
-}
-.other-category{
-  margin-top: 10px;
+  padding: 177px 130px 33px 95px;
 }
 /*------------------------------------------------------------------
 [  ]*/
@@ -178,7 +174,7 @@ iframe {
   text-align: center;
   width: 100%;
   display: block;
-  padding-bottom: 30px;
+  padding-bottom: 54px;
 }
 /*---------------------------------------------*/
 .wrap-input100 {
@@ -186,67 +182,18 @@ iframe {
   width: 100%;
   z-index: 1;
   margin-bottom: 10px;
-  
-}
-.wrap-input101 {
-  position: relative;
-  width: 100%;
-  z-index: 1;
-  margin-bottom: 10px;
-  padding-left: 25px;
-  
-}
-.gender{
-  margin-left: 75px;
-}
-.gender_internal{
-  margin-left: 47px;
 }
 .input100 {
   font-family: Poppins-Medium;
   font-size: 15px;
   line-height: 1.5;
   color: #666666;
-  
   display: block;
   width: 100%;
   background: #e6e6e6;
   height: 50px;
   border-radius: 25px;
-  padding: 0 30px 0 38px;
-  margin-right: 10px;
-}
-select {
-  border-width: 0px 16px 0px 0px ;
-  border-color: transparent;
-  border-style: solid;
-  
-}
-.input101{
-  font-family: Poppins-Medium;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #666666;
-  
-  display: block;
-  width: 100%;
-  background: #e6e6e6;
-  height: 50px;
-  border-radius: 25px;
-  padding: 11px 30px 0 38px;
-}
-.input102{
-  font-family: Poppins-Medium;
-  font-size: 15px;
-  line-height: 1.5;
-  color: #666666;
-  
-  display: block;
-  width: 100%;
-  background: #e6e6e6;
-  height: 50px;
-  border-radius: 25px;
-  padding: 13px 30px 0 38px;
+  padding: 0 30px 0 68px;
 }
 /*------------------------------------------------------------------
 [ Focus ]*/
@@ -429,4 +376,67 @@ select {
     visibility: visible;
     opacity: 1;
   }
+}
+
+.chart{
+ 
+  position: relative;
+  
+  
+  width: 530px;
+  height: 350px;
+  
+  border-radius: 16px;
+  border-color: black;
+  background-color: #ffffff;
+  margin-bottom: 5px;
+  margin-right: 20px;
+  margin-top: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#myChart1{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart2{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart3{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart4{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart5{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart6{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart7{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart8{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
+}
+#myChart9{
+  width: 470px;
+  height: 330px;
+  padding-top: 30px;
 }
