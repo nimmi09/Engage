@@ -111,7 +111,7 @@
   </div>
               <script type="text/javascript">
                 function showcategory(name){
-                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='<input type="text" id="othercategoryinput" name="othercategory" class="input100" placeholder= "New Category" onblur="check_repeats(<%= JSON.stringify(category) %>)"/>';
+                  if(name=='OtherCategory')document.getElementById('div1').innerHTML='<input type="text" id="othercategoryinput" name="othercategory" class="input100 other-category" placeholder= "New Category" onblur="check_repeats(<%= JSON.stringify(category) %>)"/>';
                   else   document.getElementById('div1').innerHTML='';
                 }
                 function titleCase(str) {
