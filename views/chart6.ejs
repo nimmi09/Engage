@@ -1,7 +1,8 @@
 
+
 <body>
   <div> 
-    <canvas id="myChart" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
+    <canvas id="myChart6" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
    
   </div> 
  </body>
@@ -12,23 +13,17 @@
  
  
  
- <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/chart.min.js"></script> -->
- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
-
+ 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
  <script>
-   var ele=document.getElementById("myChart");
-  
+    var ele=document.getElementById("myChart6");
  var x= <%- JSON.stringify(x6) %>;
      var yfemale= <%- JSON.stringify(y6female) %>;
      var ymale= <%- JSON.stringify(y6male) %>;
      var yother= <%- JSON.stringify(y6other) %>;
-     console.log(yfemale, ymale, yother, x);
-   var barColors1 = ["red", "green","blue","orange","brown"];
-   var barColors2 = ["orange","blue","green","brown","red"];
-   var barColors3 = ["blue","orange","red","green","brown"];
+  
    
-   new Chart(ele, {
+     new Chart(ele, {
    type: "bar",
    data: {
      labels: x,
@@ -57,13 +52,17 @@
       title: {
         display: true,
         text: 'Victim Gender vs Offence Category',
+        fontSize:20,
+      fontStyle:'bold',
     },
     scales: {
       xAxes: [{ stacked: true,
         display: true,
     scaleLabel: {
       display: true,
-      labelString: 'Offence Category'
+      labelString: 'Offence Category',
+      fontSize:20,
+      fontStyle:'bold',
     }
    }],
       yAxes: [{ 
@@ -71,7 +70,9 @@
         display: true,
     scaleLabel: {
       display: true,
-      labelString: 'Number of Victims'
+      labelString: 'Number of Victims',
+      fontSize:20,
+      fontStyle:'bold',
     },
     ticks: {
       

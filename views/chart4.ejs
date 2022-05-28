@@ -2,7 +2,7 @@
 
 <body>
   <div> 
-    <canvas id="myChart" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
+    <canvas id="myChart4" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
    
   </div> 
  </body>
@@ -16,7 +16,7 @@
  
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
  <script>
-   var ele=document.getElementById("myChart");
+   var ele=document.getElementById("myChart4");
  var x= <%- JSON.stringify(x4) %>;
      var y= <%- JSON.stringify(y4) %> ;
  
@@ -44,20 +44,30 @@
       title: {
         display: true,
         text: 'Victim Age vs Offence Count',
+        fontSize:20,
+      fontStyle:'bold',
+    },
+    legend: {
+       display:false
+      
     },
     scales: {
   xAxes: [{
     display: true,
     scaleLabel: {
       display: true,
-      labelString: 'Victim Age Group'
+      labelString: 'Victim Age Group',
+      fontSize:20,
+      fontStyle:'bold',
     }
   }],
   yAxes: [{
     display: true,
     scaleLabel: {
       display: true,
-      labelString: 'Number of Offences'
+      labelString: 'Number of Offences',
+      fontSize:20,
+      fontStyle:'bold',
     },
     ticks: {
       
