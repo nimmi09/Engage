@@ -12,7 +12,10 @@ const { PythonShell } = require("python-shell");
 const app = express();
 const fs = require("fs");
 const path = require("path");
-let pyshell = new PythonShell("face.py", { mode: "json"});
+//let pyshell = new PythonShell("face.py", { mode: "json"});
+
+
+let pyshell = new PythonShell("face.py", { mode: "json",pythonPath: process.env.PYTHON_PATH});
 
 const initializePassport = require("./passport-config");
 const req = require("express/lib/request");
