@@ -1,16 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-*{
+
+* {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
-::selection{
-  background: #8e44ad;
+
+::selection {
+  background: #3A6073;
   color: #fff;
 }
+
 .container-login100 {
-  width: 100%;  
+  width: 100%;
   min-height: 90.8vh;
   display: -webkit-box;
   display: -webkit-flex;
@@ -21,13 +24,12 @@
   justify-content: center;
   align-items: center;
   padding: 15px;
-  background: #9053c7;
-  background: -webkit-linear-gradient(-135deg,#ffffff, #c850c0, #4158d0,#ffffff);
-  background: -o-linear-gradient(-135deg, #ffffff,#c850c0, #4158d0,#ffffff);
-  background: -moz-linear-gradient(-135deg,  #ffffff,#c850c0, #4158d0,#ffffff);
-  background: linear-gradient(-135deg,  #ffffff,#c850c0, #4158d0,#ffffff);
+  background: #16222A;
+  background: -webkit-linear-gradient(59deg, #16222A, #3A6073);
+  background: linear-gradient(59deg, #16222A, #3A6073);
 }
-.container{
+
+.container {
   max-width: 1100px;
   display: flex;
   justify-content: space-between;
@@ -35,97 +37,112 @@
   flex-wrap: wrap;
   padding: 20px;
 }
-.container .box{
+
+.container .box {
   width: calc(50% - 10px);
   background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px 30px ;
+  padding: 20px 30px;
   border-radius: 5px;
 }
-.box .quote i{
-margin-top: 10px;
-font-size: 45px;
-color: #17c0eb
+
+.box .quote i {
+  margin-top: 10px;
+  font-size: 45px;
+  color: #17c0eb
 }
-.container .box .image{
+
+.container .box .image {
   margin: 10px 0;
   height: 150px;
   width: 150px;
-  background: #8e44ad;
+  background: #3A6073;
   padding: 3px;
   border-radius: 50%;
 }
-.box .image img{
+
+.box .image img {
   height: 100%;
   width: 100%;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #fff;
 }
-.box p{
+
+.box p {
   text-align: justify;
   margin-top: 8px;
   font-size: 16px;
   font-weight: 400;
 }
-.box .name_job{
+
+.box .name_job {
   margin: 10px 0 3px 0;
-  color: #8e44ad;
+  color: #3A6073;
   font-size: 18px;
   font-weight: 600;
 }
-.rating i{
+
+.rating i {
   font-size: 18px;
-  color: #8e44ad;
+  color: #3A6073;
   margin-bottom: 5px;
 }
-.btns{
+
+.btns {
   margin-top: 20px;
   margin-bottom: 5px;
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
-.btns a{
-  background: #8e44ad;
+
+.btns a {
+  background: #3A6073;
   width: 100%;
   padding: 9px 9px;
   outline: none;
-  border: 2px solid #8e44ad;
+  border: 2px solid #3A6073;
   border-radius: 5px;
   cursor: pointer;
   font-size: 18px;
   font-weight: 400;
-  color: #8e44ad;
+  color: #3A6073;
   transition: all 0.3s linear;
   text-decoration: none;
 }
-.btns a:first-child{
+
+.btns a:first-child {
   background: none;
   margin-right: 5px;
 }
-.btns a:last-child{
+
+.btns a:last-child {
   color: #fff;
   margin-left: 5px;
 }
-.btns a:first-child:hover{
-  background: #8e44ad;
+
+.btns a:first-child:hover {
+  background: #3A6073;
   color: #fff;
 }
-.btns a:hover{
+
+.btns a:hover {
   color: #fff;
 }
-@media (max-width:1045px){
-  .container .box{
+
+@media (max-width:1045px) {
+  .container .box {
     width: calc(50% - 10px);
     margin-bottom: 20px;
   }
 }
-@media (max-width:710px){
-  .container .box{
+
+@media (max-width:710px) {
+  .container .box {
     width: 100%;
   }
 }
