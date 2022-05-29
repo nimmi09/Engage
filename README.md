@@ -7,7 +7,7 @@ This app recognizes offenders with FACE RECOGNITION technology,provides digitiza
   * [Nodejs](#nodejs)
   * [Libraries and Modules](#libraries-and-modules)
     + [Dlib](#dlib)
-    + [Opencv and face_recognition](#opencv-and-face-recognition)
+    + [Opencv and face recognition](#opencv-and-face-recognition)
   * [Creating .env file and adding keys](#creating-env-file-and-adding-keys)
   * [Run the project](#run-the-project)
 
@@ -51,7 +51,7 @@ https://www.python.org/downloads/release/python-3913/
 
  Install dlib using pip install 
     ```pip install path_to_downloaded_dlib/dlib-19.22.99-cp39-cp39-win_amd64.whl```
-#### Opencv and face_recognition
+#### Opencv and face recognition
 
  Install opencv and face_recognition module with 
 
