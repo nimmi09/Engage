@@ -1,26 +1,26 @@
 
 
 <body>
- <div> 
-   <canvas id="myChart1" style="width:100%;max-width:700px" aria-label="Hello ARIA World" role="img"></canvas>
-  
- </div> 
-</body>
-
-
-
-
-
-
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<script>
-  var ele=document.getElementById("myChart1");
-var x= <%- JSON.stringify(x1) %>;
-    var y= <%- JSON.stringify(y1) %> ;
+  <div> 
+    <canvas id="myChart1" style="width:100%;max-width:700px"aria-label="Hello ARIA World" role="img"></canvas>
+   
+  </div> 
+ </body>
  
-  var barColors = [
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+ <script>
+   var ele=document.getElementById("myChart1");
+ var x= <%- JSON.stringify(x1) %>;
+     var y= <%- JSON.stringify(y1) %> ;
+  
+   var barColors = [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
                 'rgba(255, 206, 86, 0.2)',
@@ -44,14 +44,14 @@ var x= <%- JSON.stringify(x1) %>;
       title: {
         display: true,
         text: 'Region Wise Offence Count',
-        fontSize:25,
-        fontStyle:'bold'
+        fontSize:20,
+      fontStyle:'bold',
     },
-    
-      legend: {
+    legend: {
        display:false
       
     },
+    
     scales: {
   xAxes: [{
     display: true,
@@ -78,8 +78,7 @@ var x= <%- JSON.stringify(x1) %>;
     }
   }]
 }
-    
    }
   
  });
-</script>
+ </script>

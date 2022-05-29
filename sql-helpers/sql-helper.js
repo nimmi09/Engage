@@ -372,6 +372,7 @@ class sql_helper {
     );
   }
   static user_requests = function (user_type, cb) {
+    console.log(user_type);
     client.query(
       `SELECT * FROM tempusers where type=$1`,
       [user_type],
@@ -437,66 +438,68 @@ class sql_helper {
                   }
                   Showoffence.victim_age = results.rows[0].victim_age;
                   Showoffence.victim_gender = results.rows[0].victim_gender;
-                }
-              );
-              client.query(
-                `SELECT * FROM tempimages
-              WHERE image_id = $1`,
-                [image_id],
-                (err, results) => {
-                  if (err) {
-                    console.log(err);
-                  }
-                 var image_path = results.rows[0].path;
-                var image_path_split = image_path.split("/");
-                var file_name = image_path_split[image_path_split.length - 1];
-                Showoffence.image_path = file_name;
-                console.log(Showoffence.image_path,'mmnmnm')
-                }
-              );
-              client.query(
-                `SELECT * FROM tempoffence_category
-                  WHERE category_id = $1`,
-                [category_id],
-                (err, results) => {
-                  if (err) {
-                    console.log(err);
-                  }
-                  if (results.rows.length > 0) {
-                    console.log("temp",results.rows)
-                    Showoffence.category_name = results.rows[0].category_name;
-                  } else {
+                  client.query(
+                    `SELECT * FROM tempimages
+                  WHERE image_id = $1`,
+                    [image_id],
+                    (err, results) => {
+                      if (err) {
+                        console.log(err);
+                      }
+                     var image_path = results.rows[0].path;
+                    var image_path_split = image_path.split("/");
+                    var file_name = image_path_split[image_path_split.length - 1];
+                    Showoffence.image_path = file_name;
+                    console.log(Showoffence.image_path,'mmnmnm');
                     client.query(
-                      `SELECT * FROM offence_category
+                      `SELECT * FROM tempoffence_category
                         WHERE category_id = $1`,
                       [category_id],
                       (err, results) => {
                         if (err) {
                           console.log(err);
                         }
-                       
-                        Showoffence.category_name =results.rows[0].category_name;
-                        
-                        client.query(
-                          `SELECT * FROM location
-                          WHERE loc_id = $1`,
-                          [loc_id],
-                          (err, results) => {
-                            if (err) {
-                              console.log(err);
+                        if (results.rows.length > 0) {
+                          console.log("temp",results.rows)
+                          Showoffence.category_name = results.rows[0].category_name;
+                        } else {
+                          client.query(
+                            `SELECT * FROM offence_category
+                              WHERE category_id = $1`,
+                            [category_id],
+                            (err, results) => {
+                              if (err) {
+                                console.log(err);
+                              }
+                             
+                              Showoffence.category_name =results.rows[0].category_name;
+                              
+                              client.query(
+                                `SELECT * FROM location
+                                WHERE loc_id = $1`,
+                                [loc_id],
+                                (err, results) => {
+                                  if (err) {
+                                    console.log(err);
+                                  }
+                                  Showoffence.region = results.rows[0].region;
+                                  offences.push(Showoffence);
+                                  if (i == offence_results.rows.length - 1) {
+                                    return cb(undefined, offences);
+                                  }
+                                }
+                              );
                             }
-                            Showoffence.region = results.rows[0].region;
-                            offences.push(Showoffence);
-                            if (i == offence_results.rows.length - 1) {
-                              return cb(undefined, offences);
-                            }
-                          }
-                        );
+                          );
+                        }
                       }
                     );
-                  }
+                    }
+                  );
                 }
               );
+              
+              
              
             }
           );

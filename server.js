@@ -259,6 +259,7 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
     req.user.type == "super"
   ) {
     sql_helper.user_requests(req.params.type, function (err, results) {
+      console.log(err);
       if (err == undefined) {
         requests = Array.from(results.rows);
         if (requests.length == 0) {
@@ -273,13 +274,16 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
 });
 //show offence requests
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
+  console.log("HeyHey");
   if (
     req.user.type == "user" ||
     req.user.type == "admin" ||
     req.user.type == "super"
   ) {
+    console.log(req.user.type,"type");
     
     sql_helper.get_offence_requests(function (err, offences) {
+      console.log(err, offences);
       
       if (err == undefined) {
        
