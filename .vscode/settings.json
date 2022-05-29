@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/3930601f-78b2-4fc4-85db-e54bc0e8d7f8/microsoft.web/sites/subscriptions/3930601f-78b2-4fc4-85db-e54bc0e8d7f8/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/Offace",
+  "appService.deploySubpath": "."
+}
