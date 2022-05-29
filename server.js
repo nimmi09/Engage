@@ -220,17 +220,21 @@ app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
     req.params.type == "admin" ||
     req.params.type == "super"
   ) {
-    sql_helper.accept_user(req.params.uid);
-    if (req.params.type == "user") {
-      return res.redirect("/users/requests/user");
-    } else if (req.params.type == "admin") {
-      return res.redirect("/users/requests/admin");
-    }
+    sql_helper.accept_user(req.params.uid, function() {
+      if (req.params.type == "user") {
+        return res.redirect("/users/requests/user");
+      } else if (req.params.type == "admin") {
+        return res.redirect("/users/requests/admin");
+      }
+    });
+   
   } else if (req.params.type == "offence") {
+    console.log("offence request accept");
     sql_helper.accept_offence(req.params.uid, function() {
+      console.log("cb accept request")
       return res.redirect("/offence_requests");
     });
-    console.log("hello");
+   
     
   }
 });
@@ -241,15 +245,20 @@ app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
     req.params.type == "admin" ||
     req.params.type == "super"
   ) {
-    sql_helper.reject_user(req.params.uid);
-    if (req.params.type == "user") {
-      return res.redirect("/users/requests/user");
-    } else if (req.params.type == "admin") {
-      return res.redirect("/users/requests/admin");
-    }
+    sql_helper.reject_user(req.params.uid, function() {
+      if (req.params.type == "user") {
+        return res.redirect("/users/requests/user");
+      } else if (req.params.type == "admin") {
+        return res.redirect("/users/requests/admin");
+      }
+    });
+   
   } else if (req.params.type == "offence") {
-    sql_helper.reject_offence(req.params.uid);
-    return res.redirect("/offence_requests");
+    sql_helper.reject_offence(req.params.uid, function() {
+      console.log("cb reject request")
+      return res.redirect("/offence_requests");
+    });
+    
   }
 });
 //show user requests
@@ -286,7 +295,7 @@ app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
       console.log(err, offences);
       
       if (err == undefined) {
-       
+       console.log("hiin",offences);
         if (offences.length == 0) {
           req.flash("error_msg", "No Requests to show.");
           return res.redirect("/users/dashboard");

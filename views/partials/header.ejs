@@ -17,6 +17,7 @@ background: linear-gradient(59deg,  #16222A,#3A6073);" id="nav">
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/search" style="color: white;">Search</a>
           </li>
+          <% if (type=='super' || type=='admin') { %>
          <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white;">
             Requests
@@ -27,7 +28,7 @@ background: linear-gradient(59deg,  #16222A,#3A6073);" id="nav">
             <li><a class="dropdown-item" href="/users/requests/admin" >Admin</a></li>
             
             <% } %> 
-            <% if (type=='super' || type=='admin') { %>
+           
             <li><a class="dropdown-item" href="/users/requests/user">User</a></li>
             <li>  <a class="dropdown-item"   href="/offence_requests" >Offence</a> </li> 
             <% } %> 

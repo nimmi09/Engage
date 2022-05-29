@@ -2,7 +2,7 @@ const { file_utility } = require("../Utilities/file-utility");
 const { client } = require("../database-config/database");
 const { showoffence } = require("../components/showoffence");
 class sql_helper {
-  static accept_user(id) {
+  static accept_user(id,callbackfunc) {
     console.log("123", id);
     client.query(
       `SELECT * FROM tempusers
@@ -26,17 +26,19 @@ class sql_helper {
             if (err) {
               console.log(err);
             }
+            client.query(
+              `DELETE from tempusers WHERE user_id=$1`,
+              [id],
+              (err, results) => {
+                if (err) {
+                  console.log(err);
+                }
+                return callbackfunc();
+              }
+            );
           }
         );
-        client.query(
-          `DELETE from tempusers WHERE user_id=$1`,
-          [id],
-          (err, results) => {
-            if (err) {
-              console.log(err);
-            }
-          }
-        );
+       
       }
     );
   }
@@ -112,137 +114,151 @@ class sql_helper {
                               }
                             }
                           );
-                        }
-                        //deleting file from temporary database storage
-                        client.query(
-                          `DELETE from tempimages WHERE image_id=$1`,
-                          [image_id],
-                          (err, results1) => {
-                            console.log("permn",err,results1);
-                            if (err) {
-                              console.log(err);
-                            }
+                          if (i==results.rows.length-1){
                             client.query(
-                              `DELETE FROM  tempoffence  WHERE offence_id=$1`,
-                              [id],
+                              `DELETE from tempimages WHERE image_id=$1`,
+                              [image_id],
                               (err, results1) => {
+                                console.log("permn",err,results1);
                                 if (err) {
                                   console.log(err);
                                 }
                                 client.query(
-                                  `DELETE from tempoffender WHERE offender_id=$1`,
-                                  [offender_id],
+                                  `DELETE FROM  tempoffence  WHERE offence_id=$1`,
+                                  [id],
                                   (err, results1) => {
                                     if (err) {
                                       console.log(err);
                                     }
                                     client.query(
-                                      `SELECT * FROM tempvictim
-                                      WHERE victim_id = $1`,
-                                      [victim_id],
-                                      (err, results) => {
+                                      `DELETE from tempoffender WHERE offender_id=$1`,
+                                      [offender_id],
+                                      (err, results1) => {
                                         if (err) {
                                           console.log(err);
                                         }
-                                        var victim_age = results.rows[0].victim_age;
-                                        var victim_gender = results.rows[0].victim_gender;
                                         client.query(
-                                          `INSERT INTO victim(victim_age,victim_gender,victim_id)
-                                                VALUES ($1, $2,$3)`,
-                                          [victim_age, victim_gender, victim_id],
-                                          (err, results1) => {
+                                          `SELECT * FROM tempvictim
+                                          WHERE victim_id = $1`,
+                                          [victim_id],
+                                          (err, results) => {
                                             if (err) {
                                               console.log(err);
                                             }
+                                            var victim_age = results.rows[0].victim_age;
+                                            var victim_gender = results.rows[0].victim_gender;
+
                                             client.query(
-                                              `DELETE from tempvictim WHERE victim_id=$1`,
-                                              [victim_id],
+                                              `INSERT INTO victim(victim_age,victim_gender,victim_id)
+                                                    VALUES ($1, $2,$3)`,
+                                              [victim_age, victim_gender, victim_id],
                                               (err, results1) => {
                                                 if (err) {
                                                   console.log(err);
                                                 }
                                                 client.query(
-                                                  `SELECT * FROM tempoffence_category
-                                                      WHERE category_id = $1`,
-                                                  [category_id],
-                                                  (err, results) => {
+                                                  `DELETE from tempvictim WHERE victim_id=$1`,
+                                                  [victim_id],
+                                                  (err, results1) => {
                                                     if (err) {
                                                       console.log(err);
                                                     }
-                                                    if (results.rows.length > 0) {
-                                                      console.log("if nmnn",results.rows.length);
-                                                      var category_name = results.rows[0].category_name;
-                                                      client.query(
-                                                        `INSERT INTO offence_category(category_id,category_name)
-                                                                VALUES ($1, $2)`,
-                                                        [category_id, category_name],
-                                                        (err, results1) => {
-                                                          if (err && err.code == 23505) {
-                                                            client.query(
-                                                              `SELECT category_id FROM offence_category where category_name=$1`,
-                                                              [category_name],
-                                                              (err, results) => {
-                                                                if (err) {
-                                                                  console.log(err);
-                                                                }
-                                                                category_id = results.rows[0].category_id;
+                                                    client.query(
+                                                      `SELECT * FROM tempoffence_category
+                                                          WHERE category_id = $1`,
+                                                      [category_id],
+                                                      (err, results) => {
+                                                        if (err) {
+                                                          console.log(err);
+                                                        }
+                                                        if (results.rows.length > 0) {
+                                                          console.log("if nmnn",results.rows.length);
+                                                          var category_name = results.rows[0].category_name;
+                                                          client.query(
+                                                            `INSERT INTO offence_category(category_id,category_name)
+                                                                    VALUES ($1, $2)`,
+                                                            [category_id, category_name],
+                                                            (err, results1) => {
+                                                              if (err && err.code == 23505 || err==undefined) {
                                                                 client.query(
-                                                                  `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
-                                                                      VALUES ($1, $2, $3, $4,$5,$6,$7)`,
-                                                                  [
-                                                                    user_id_offence,
-                                                                    offender_id,
-                                                                    loc_id,
-                                                                    date_committed,
-                                                                    id,
-                                                                    victim_id,
-                                                                    category_id,
-                                                                  ],
-                                                                  (err, results1) => {
+                                                                  `SELECT category_id FROM offence_category where category_name=$1`,
+                                                                  [category_name],
+                                                                  (err, results) => {
                                                                     if (err) {
                                                                       console.log(err);
                                                                     }
-                                                                  }
-                                                                );
-                                                              }
-                                                            );
-                                                          }
-                                                        }
-                                                      );
-                                                    } else {
-                                                      console.log("else");
-                                                      client.query(
-                                                        `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
-                                                          VALUES ($1, $2, $3, $4,$5,$6,$7)`,
-                                                        [
-                                                          user_id_offence,
-                                                          offender_id,
-                                                          loc_id,
-                                                          date_committed,
-                                                          id,
-                                                          victim_id,
-                                                          category_id,
-                                                        ],
-                                                        (err, results) => {
-                                                          if (err) {
-                                                            console.log(err);
-                                                          }
-                                                          console.log("mnmnmnm", results);
-                                                          client.query(
-                                                            `DELETE from tempoffence_category
-                                                        WHERE category_id = $1`,
-                                                            [category_id],
-                                                            (err, results1) => {
+                                                                    category_id = results.rows[0].category_id;
+                                                                                         client.query(
+                                                            `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
+                                                              VALUES ($1, $2, $3, $4,$5,$6,$7)`,
+                                                            [
+                                                              user_id_offence,
+                                                              offender_id,
+                                                              loc_id,
+                                                              date_committed,
+                                                              id,
+                                                              victim_id,
+                                                              category_id,
+                                                            ],
+                                                            (err, results) => {
                                                               if (err) {
                                                                 console.log(err);
                                                               }
-                                                              return callbackfunc();
+                                                              console.log("mnmnmnm", results);
+                                                              client.query(
+                                                                `DELETE from tempoffence_category
+                                                            WHERE category_id = $1`,
+                                                                [category_id],
+                                                                (err, results1) => {
+                                                                  if (err) {
+                                                                    console.log(err);
+                                                                  }
+                                                                  return callbackfunc();
+                                                                }
+                                                              );
+                                                            }
+                                                          );
+                                                                  }
+                                                                );
+                                                              }
+                                                            }
+                                                          );
+                                                        } else {
+                                                          console.log("else");
+                                                          client.query(
+                                                            `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
+                                                              VALUES ($1, $2, $3, $4,$5,$6,$7)`,
+                                                            [
+                                                              user_id_offence,
+                                                              offender_id,
+                                                              loc_id,
+                                                              date_committed,
+                                                              id,
+                                                              victim_id,
+                                                              category_id,
+                                                            ],
+                                                            (err, results) => {
+                                                              if (err) {
+                                                                console.log(err);
+                                                              }
+                                                              console.log("mnmnmnm", results);
+                                                              client.query(
+                                                                `DELETE from tempoffence_category
+                                                            WHERE category_id = $1`,
+                                                                [category_id],
+                                                                (err, results1) => {
+                                                                  if (err) {
+                                                                    console.log(err);
+                                                                  }
+                                                                  return callbackfunc();
+                                                                }
+                                                              );
                                                             }
                                                           );
                                                         }
-                                                      );
-                                                    }
-                                                    
+                                                        
+                                                      }
+                                                    );
                                                   }
                                                 );
                                               }
@@ -256,7 +272,9 @@ class sql_helper {
                               }
                             );
                           }
-                        );
+                        }
+                        //deleting file from temporary database storage
+                       
                       }
                     );
                   
@@ -274,8 +292,8 @@ class sql_helper {
         );
       }
     );
-  }
-  static reject_user(id) {
+  };
+  static reject_user(id,callbackfunc) {
     client.query(
       `DELETE from tempusers WHERE user_id=$1`,
       [id],
@@ -283,10 +301,11 @@ class sql_helper {
         if (err) {
           console.log(err);
         }
+        return callbackfunc();
       }
     );
   }
-  static reject_offence(id) {
+  static reject_offence(id,callbackfunc) {
     client.query(
       `SELECT * FROM tempoffence
       WHERE offence_id = $1`,
@@ -314,49 +333,39 @@ class sql_helper {
                 if (err) {
                   console.log(err);
                 }
-              }
-            );
-            client.query(
-              `DELETE from tempoffender WHERE offender_id=$1`,
-              [offender_id],
-              (err, results1) => {
-                if (err) {
-                  console.log(err);
-                }
-              }
-            );
-            client.query(
-              `DELETE from tempvictim WHERE victim_id=$1`,
-              [victim_id],
-              (err, results1) => {
-                if (err) {
-                  console.log(err);
-                }
-              }
-            );
-            client.query(
-              `DELETE from tempoffence_category
-              WHERE category_id = $1`,
-              [category_id],
-              (err, results1) => {
-                if (err) {
-                  console.log(err);
-                }
-              }
-            );
-            client.query(
-              `SELECT * FROM tempimages
-                WHERE image_id = $1`,
-              [image_id],
-              (err, results) => {
-                if (err) {
-                  console.log(err);
-                }
-                var images = Array.from(results.rows);
-                file_utility.deletefile(images);
-              }
-            );
-            //deleting rejected offender's image paths from temporary storage
+                client.query(
+                  `DELETE from tempoffender WHERE offender_id=$1`,
+                  [offender_id],
+                  (err, results1) => {
+                    if (err) {
+                      console.log(err);
+                    }
+                    client.query(
+                      `DELETE from tempvictim WHERE victim_id=$1`,
+                      [victim_id],
+                      (err, results1) => {
+                        if (err) {
+                          console.log(err);
+                        }
+                        client.query(
+                          `DELETE from tempoffence_category
+                          WHERE category_id = $1`,
+                          [category_id],
+                          (err, results1) => {
+                            if (err) {
+                              console.log(err);
+                            }
+                            client.query(
+                              `SELECT * FROM tempimages
+                                WHERE image_id = $1`,
+                              [image_id],
+                              (err, results) => {
+                                if (err) {
+                                  console.log(err);
+                                }
+                                var images = Array.from(results.rows);
+                                file_utility.deletefile(images);
+                                 //deleting rejected offender's image paths from temporary storage
             client.query(
               `DELETE from tempimages WHERE image_id=$1`,
               [image_id],
@@ -364,8 +373,24 @@ class sql_helper {
                 if (err) {
                   console.log(err);
                 }
+                return callbackfunc();
               }
             );
+                              }
+                            );
+                          }
+                        );
+                      }
+                    );
+                  }
+                );
+              }
+            );
+            
+            
+            
+           
+           
           }
         );
       }
@@ -462,6 +487,23 @@ class sql_helper {
                         if (results.rows.length > 0) {
                           console.log("temp",results.rows)
                           Showoffence.category_name = results.rows[0].category_name;
+                          //also added inside if
+
+                          client.query(
+                            `SELECT * FROM location
+                            WHERE loc_id = $1`,
+                            [loc_id],
+                            (err, results) => {
+                              if (err) {
+                                console.log(err);
+                              }
+                              Showoffence.region = results.rows[0].region;
+                              offences.push(Showoffence);
+                              if (i == offence_results.rows.length - 1) {
+                                return cb(undefined, offences);
+                              }
+                            }
+                          );
                         } else {
                           client.query(
                             `SELECT * FROM offence_category
