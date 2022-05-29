@@ -3,7 +3,7 @@ const { client } = require("../database-config/database");
 const { showoffence } = require("../components/showoffence");
 class sql_helper {
   static accept_user(id,callbackfunc) {
-    console.log("123", id);
+  
     client.query(
       `SELECT * FROM tempusers
           WHERE user_id = $1`,
@@ -17,7 +17,7 @@ class sql_helper {
         var email = results.rows[0].email;
         var desg = results.rows[0].user_designation;
         var hashedPassword = results.rows[0].password;
-        console.log(type, id, name, email, desg, hashedPassword);
+      
         client.query(
           `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
                 VALUES ($1, $2, $3, $4,$5,$6)`,
@@ -101,14 +101,14 @@ class sql_helper {
                           var image_id = results.rows[i].image_id;
                           //moving file to permanent folder
                           var image_path_new = file_utility.movefile(image_path);
-                          console.log(image_path_new,'anbc',image_id);
+                        
                           //adding file in database permanent storage
                           client.query(
                             `INSERT INTO images (path,image_id)
                       VALUES ($1, $2)`,
                             [image_path_new, image_id],
                             (err, results1) => {
-                              console.log("permn",err,results1,image_id);
+                           
                               if (err) {
                                 console.log(err);
                               }
@@ -119,7 +119,7 @@ class sql_helper {
                               `DELETE from tempimages WHERE image_id=$1`,
                               [image_id],
                               (err, results1) => {
-                                console.log("permn",err,results1);
+                             
                                 if (err) {
                                   console.log(err);
                                 }
@@ -172,7 +172,7 @@ class sql_helper {
                                                           console.log(err);
                                                         }
                                                         if (results.rows.length > 0) {
-                                                          console.log("if nmnn",results.rows.length);
+                                                         
                                                           var category_name = results.rows[0].category_name;
                                                           client.query(
                                                             `INSERT INTO offence_category(category_id,category_name)
@@ -204,7 +204,7 @@ class sql_helper {
                                                               if (err) {
                                                                 console.log(err);
                                                               }
-                                                              console.log("mnmnmnm", results);
+                                                            
                                                               client.query(
                                                                 `DELETE from tempoffence_category
                                                             WHERE category_id = $1`,
@@ -224,7 +224,7 @@ class sql_helper {
                                                             }
                                                           );
                                                         } else {
-                                                          console.log("else");
+                                                         
                                                           client.query(
                                                             `INSERT INTO offence (user_id,offender_id,loc_id,date_committed,offence_id,victim_id,category_id)
                                                               VALUES ($1, $2, $3, $4,$5,$6,$7)`,
@@ -241,7 +241,7 @@ class sql_helper {
                                                               if (err) {
                                                                 console.log(err);
                                                               }
-                                                              console.log("mnmnmnm", results);
+                                                           
                                                               client.query(
                                                                 `DELETE from tempoffence_category
                                                             WHERE category_id = $1`,
@@ -397,7 +397,7 @@ class sql_helper {
     );
   }
   static user_requests = function (user_type, cb) {
-    console.log(user_type);
+ 
     client.query(
       `SELECT * FROM tempusers where type=$1`,
       [user_type],
@@ -418,7 +418,7 @@ class sql_helper {
           return cb(err);
         }
         let offences = [];
-        console.log(offence_results.rows.length,'8989')
+     
         if (offence_results.rows.length == 0) {
           return cb(undefined, offences);
         }
@@ -475,7 +475,7 @@ class sql_helper {
                     var image_path_split = image_path.split("/");
                     var file_name = image_path_split[image_path_split.length - 1];
                     Showoffence.image_path = file_name;
-                    console.log(Showoffence.image_path,'mmnmnm');
+                 
                     client.query(
                       `SELECT * FROM tempoffence_category
                         WHERE category_id = $1`,
@@ -485,7 +485,7 @@ class sql_helper {
                           console.log(err);
                         }
                         if (results.rows.length > 0) {
-                          console.log("temp",results.rows)
+                        
                           Showoffence.category_name = results.rows[0].category_name;
                           //also added inside if
 
@@ -629,7 +629,6 @@ class sql_helper {
         if (err) {
           return cb(err);
         }
-console.log(results,Category.category_name);
         var category_id = results.rows[0].category_id;
         return cb(undefined, category_id);
       }
@@ -643,8 +642,7 @@ console.log(results,Category.category_name);
         if (err) {
           return cb(err);
         }
-        console.log(Location);
-        console.log(results, results.rows[0]);
+       
         var loc_id = results.rows[0].loc_id;
         return cb(undefined, loc_id);
       }
@@ -684,7 +682,7 @@ console.log(results,Category.category_name);
     );
   }
   static add_victim = function (Victim, cb) {
-    console.log("reached", Victim);
+  
     client.query(
       `INSERT INTO tempvictim (victim_age,victim_gender)
             VALUES ($1, $2) RETURNING victim_id`,
@@ -693,7 +691,7 @@ console.log(results,Category.category_name);
         if (err) {
           return cb(err);
         }
-        console.log("reached2", Victim);
+      
         var victim_id = results.rows[0].victim_id;
         return cb(undefined, victim_id);
       }
@@ -712,13 +710,12 @@ console.log(results,Category.category_name);
     );
   };
   static get_users_and_requests = function (email, cb) {
-    console.log("get");
-    console.log(client);
+  
     client.query(
       `SELECT * from users where email=$1 `,
       [email],
       (err, results) => {
-        console.log('err,resuly',err,results);
+      
         if (err) {
           return cb(err);
         }
@@ -829,7 +826,7 @@ console.log(results,Category.category_name);
                   console.log(err);
                 }
                 Showoffence.region = results.rows[0].region;
-                console.log(Showoffence);
+             
                 return cb(undefined, Showoffence);
               }
             );
@@ -898,7 +895,7 @@ static delete_offence(offender_id,offence_id,cb) {
               }
             
               var images = Array.from(results.rows);
-              console.log(images,image_id);
+           
               file_utility.deletefile(images);
             }
           );

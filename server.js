@@ -229,9 +229,9 @@ app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
     });
    
   } else if (req.params.type == "offence") {
-    console.log("offence request accept");
+   
     sql_helper.accept_offence(req.params.uid, function() {
-      console.log("cb accept request")
+     
       return res.redirect("/offence_requests");
     });
    
@@ -255,7 +255,7 @@ app.get("/reject/:type/:uid", checkNotAuthenticated, (req, res) => {
    
   } else if (req.params.type == "offence") {
     sql_helper.reject_offence(req.params.uid, function() {
-      console.log("cb reject request")
+     
       return res.redirect("/offence_requests");
     });
     
@@ -283,19 +283,19 @@ app.get("/users/requests/:type", checkNotAuthenticated, (req, res) => {
 });
 //show offence requests
 app.get("/offence_requests", checkNotAuthenticated, (req, res) => {
-  console.log("HeyHey");
+ 
   if (
     req.user.type == "user" ||
     req.user.type == "admin" ||
     req.user.type == "super"
   ) {
-    console.log(req.user.type,"type");
+    
     
     sql_helper.get_offence_requests(function (err, offences) {
-      console.log(err, offences);
+     
       
       if (err == undefined) {
-       console.log("hiin",offences);
+      
         if (offences.length == 0) {
           req.flash("error_msg", "No Requests to show.");
           return res.redirect("/users/dashboard");
@@ -359,7 +359,7 @@ app.get("/add_offence", checkNotAuthenticated, (req, res) => {
       sql_helper.get_locations(function (err, results) {
         if (err == undefined) {
           var locations = Array.from(results.rows);
-console.log(category);
+
           return res.render("add_offence.ejs", {
             locations,
             category,
@@ -391,7 +391,7 @@ app.get("/users/logout", (req, res) => {
 //taking user information and passing to sql-helper to save it in  database
 app.post("/users/register", async (req, res) => {
   let { type, name, email, desg, password, password2 } = req.body;
-console.log('register',req.body);
+
   let errors = [];
   if (password !== password2) {
     errors.push({ message: "Passwords do not match" });
@@ -407,9 +407,9 @@ console.log('register',req.body);
       password2,
     });
   } else {
-    console.log('just reaching 123456');
+   
     hashedPassword = await bcrypt.hash(password, 10);
-    console.log('just reaching');
+   
     sql_helper.get_users_and_requests(email, function (err, results, results1) {
 
       if (err == undefined) {
@@ -420,7 +420,7 @@ console.log('register',req.body);
           res.redirect("/users/register");
         } else {
           let User = new user(type, name, email, desg, hashedPassword);
-          //console.log(User)
+         
           sql_helper.add_user(User, function (err, results) {
             if (err == undefined) {
               var status = results;
@@ -446,7 +446,7 @@ app.post(
     failureFlash: true,
   }),
   (req, res) => {
-    console.log('hhjhj')
+    
     return res.redirect("/users/dashboard");
   }
 );
@@ -470,7 +470,7 @@ app.post("/users/super", async (req, res) => {
     errors.push({ message: "Passwords do not match" });
   }
   if (errors.length > 0) {
-    //console.log('123')
+  
     return res.render("super.ejs", {
       errors,
       type,
@@ -483,8 +483,7 @@ app.post("/users/super", async (req, res) => {
     });
   } else {
     hashedPassword = await bcrypt.hash(password, 10);
-    //console.log(hashedPassword)
-    // Validation passed
+   
     client.query(
       `INSERT INTO users (type,user_id,user_name, email,user_designation, password)
                 VALUES ($1, $2, $3, $4,$5,$6)`,
@@ -501,12 +500,12 @@ app.post("/users/super", async (req, res) => {
 });
 //searches an offender in database and returns result
 app.post("/search", searchupload.single("photo"), (req, res) => {
-  console.log("before get image")
+ 
   sql_helper.get_images(function (err, results) {
-    console.log("after")
+ 
     if (err == undefined) {
       var images = results;
-      console.log("undefined",images);
+    
       
       pyshell.send(
         {
@@ -518,7 +517,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
    
       pyshell.once("message", function (message) {
         
-        console.log("message")
+        
         if (message["type"] == "face_recog") {
           var image_id = message["image_id"];
           if (image_id == -1) {
@@ -532,7 +531,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
               image_id,
               function (err, results) {
                 if (err == undefined) {
-                  console.log(results);
+                  
                   return res.render("offender_profile.ejs", {
                     type: req.user.type,
                     profile: results,
@@ -577,7 +576,7 @@ app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   //replaces backward slashes with forward slash to make the path suitable for all platforms
   var new_image_path =  req.file.path.replace(/\\/g,'/')
   Image.path=new_image_path
-  console.log(new_image_path,Image.path)
+ 
   let Victim = new victim();
   Victim.age = victim_age;
   Victim.gender = victim_gender;

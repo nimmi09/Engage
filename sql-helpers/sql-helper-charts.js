@@ -65,7 +65,7 @@ static victim_gender_vs_offence_categories(category_name,i,cb){
         console.log(err);
         return cb(err);
       }
-      console.log('sql',category_name,i);
+     
       
       return cb(undefined, results.rows,i);
     }
