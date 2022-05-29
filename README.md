@@ -10,6 +10,7 @@ This app recognizes offenders with FACE RECOGNITION technology,provides digitiza
     + [Opencv and face recognition](#opencv-and-face-recognition)
   * [Creating .env file and adding keys](#creating-env-file-and-adding-keys)
   * [Run the project](#run-the-project)
+  
 
 
 
@@ -67,6 +68,10 @@ https://www.python.org/downloads/release/python-3913/
  Now run the project with ```npm run devStart```
 
  Enter localhost:3000 in the url bar to use the app
+ 
+ ### Super Admin account details
+ super_admin@gmail.com
+ password: 123
 
 
     
