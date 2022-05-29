@@ -25,11 +25,11 @@
    
 </head>
 <body>
-  <ul>
+  
     <% if (typeof errors != 'undefined') { %> <% errors.forEach(error => { %>
     <li><%= error.message %></li>
     <% }) %> <% } %>
-  </ul>
+ 
   
   <% if(messages.success_msg) { %>
     <div class="alert alert-success alert-dismissible fade show" role="alert">
