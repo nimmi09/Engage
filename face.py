@@ -9,7 +9,7 @@ import os.path
 
 
 
-
+sys.path.append('./.heroku/python/lib/python3.9/site-packages')
 def func(q):
     return json.dumps({'value': q})
 
