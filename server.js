@@ -2,6 +2,7 @@ const express = require("express");
 
 const { client } = require("./database-config/database");
 const multer = require("multer");
+const MulterAzureStorage = require('multer-azure-blob-storage').MulterAzureStorage;
 //const upload = multer({dest: __dirname + '/uploads'});
 const bcrypt = require("bcrypt");
 const passport = require("passport");
