@@ -227,8 +227,11 @@ app.get("/accept/:type/:uid", checkNotAuthenticated, (req, res) => {
       return res.redirect("/users/requests/admin");
     }
   } else if (req.params.type == "offence") {
-    sql_helper.accept_offence(req.params.uid);
-    return res.redirect("/offence_requests");
+    sql_helper.accept_offence(req.params.uid, function() {
+      return res.redirect("/offence_requests");
+    });
+    console.log("hello");
+    
   }
 });
 //reject requests
@@ -538,7 +541,7 @@ app.post("/search", searchupload.single("photo"), (req, res) => {
 
 
 //adds information about an offence in database
-app.post("/add_offence", azureupload.single("photo"), (req, res, next) => {
+app.post("/add_offence", upload.single("photo"), (req, res, next) => {
   date = new Date().toDateString();
   let {
     name,
